@@ -5,7 +5,7 @@ import { cn } from "../lib/utils";
 /* ── Gemini ──────────────────────────────────────────────────── */
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY ?? "";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
 const STYLE_GUIDES: Record<string, string> = {
   demanding: "terse and critical — always finds something to push harder on. Never fully satisfied but not cruel. References specific code.",

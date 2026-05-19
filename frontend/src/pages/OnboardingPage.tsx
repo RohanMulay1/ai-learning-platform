@@ -76,7 +76,7 @@ Level: ${level}. Goal: ${goalLabel}. Score: ${score}/${TOTAL_Q}.
 Write exactly 2 sentences (max 40 words total). First: one warm acknowledgment of their level. Second: the single most important first action they should take. Direct, specific, motivating. Second person.`;
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

@@ -29,7 +29,7 @@ Rules:
 - If the document is not about programming/CS, return { "concepts": [], "eli5": "• This document doesn't appear to be about programming or computer science." }`;
 
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },

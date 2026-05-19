@@ -93,7 +93,7 @@ async function callGemini(messages: Message[], systemPrompt: string): Promise<st
   if (!GEMINI_KEY) throw new Error("NO_KEY");
 
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
