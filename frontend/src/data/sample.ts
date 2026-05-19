@@ -289,3 +289,4 @@ export const ACTIVITY_HEATMAP = (() => {
     data.push({ date: d.toISOString().split("T")[0], count });
   }
   return data;
+})();
