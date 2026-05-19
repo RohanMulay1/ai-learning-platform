@@ -28,7 +28,7 @@ export const SAMPLE_COURSES = [
       { id: "m2", title: "Two Sum Pattern", duration: "30 min", type: "challenge", completed: true, description: "Classic hash map application", challenge_id: "1" },
       { id: "m3", title: "Anagram Detection", duration: "25 min", type: "challenge", completed: true, description: "Frequency counting technique", challenge_id: "2" },
       { id: "m4", title: "Sliding Window Intro", duration: "50 min", type: "lesson", completed: true, description: "Transitioning from arrays to windows", lesson_id: "l2" },
-      { id: "m5", title: "Group Anagrams", duration: "35 min", type: "challenge", completed: false, description: "Advanced grouping with hash maps", challenge_id: "2" },
+      { id: "m5", title: "Group Anagrams", duration: "35 min", type: "lesson", completed: false, description: "Advanced grouping with hash maps", lesson_id: "l_ga" },
       { id: "m6", title: "Arrays & Hashing Quiz", duration: "10 min", type: "quiz", completed: false, description: "Test your conceptual understanding", quiz_id: "arrays" },
     ],
     tags: ["Arrays", "Hash Maps", "Interview Prep"],
@@ -193,6 +193,54 @@ def length_of_longest_substring(s: str) -> int:
         best = max(best, right - left + 1)
 
     return best`,
+  },
+  l_ga: {
+    title: "Group Anagrams",
+    content: `**Group Anagrams** is a classic hash map problem where you take a list of strings and group together all strings that are anagrams of each other.
+
+Two strings are anagrams if they contain the exact same characters in the same frequency — just in a different order. For example, "eat", "tea", and "ate" are all anagrams.
+
+## The key insight
+
+You need a way to produce the same **canonical key** for all strings that are anagrams of each other. The most common approach: sort the characters of each string alphabetically. Every anagram will sort to the same string.
+
+- "eat" → sorted → "aet"
+- "tea" → sorted → "aet"
+- "ate" → sorted → "aet"
+
+All three map to the same key, so they go in the same group.
+
+## The algorithm
+
+1. Create an empty hash map: key = sorted string, value = list of original strings
+2. For each string in the input, sort its characters to get the key
+3. Append the original string to the list at that key
+4. Return all the values of the hash map
+
+## Time and space complexity
+
+- **Time:** O(n · k log k) where n = number of strings, k = max string length (sorting each string costs k log k)
+- **Space:** O(n · k) to store all strings in the hash map`,
+    key_points: [
+      "Sort each string's characters to get a canonical key — all anagrams share the same sorted form",
+      "Use a hash map: sorted_string → list of original strings",
+      "Time complexity is O(n · k log k) — dominated by the sort inside the loop",
+      "Alternative key: character frequency tuple (avoids sorting, O(n · k) time)",
+    ],
+    code_example: `def group_anagrams(strs: list[str]) -> list[list[str]]:
+    groups = {}  # sorted_word -> [original words]
+
+    for word in strs:
+        key = "".join(sorted(word))   # canonical form
+        if key not in groups:
+            groups[key] = []
+        groups[key].append(word)
+
+    return list(groups.values())
+
+# Example
+print(group_anagrams(["eat","tea","tan","ate","nat","bat"]))
+# [["eat","tea","ate"], ["tan","nat"], ["bat"]]`,
   },
   l3: {
     title: "The Two Pointer Technique",
