@@ -162,7 +162,7 @@ export function Dashboard() {
       <div className="flex items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold text-hr-text tracking-tight">
-            {greeting}, <span className="text-hr-green">Alex</span> 👋
+            {greeting}, <span className="text-hr-green">Rohan</span> 👋
           </h1>
           <p className="text-hr-text-s text-sm mt-0.5">
             {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
