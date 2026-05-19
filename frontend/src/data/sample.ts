@@ -21,15 +21,15 @@ export const SAMPLE_CHALLENGES = [
 export const SAMPLE_COURSES = [
   {
     id: "c1", title: "Arrays & Hashing Mastery", topic: "Data Structures", difficulty: "beginner",
-    estimated_hours: 8, progress: 100, enrolled: true,
+    estimated_hours: 8, progress: 66, enrolled: true,
     description: "Master the most fundamental data structure. Learn hash maps, sets, and array manipulation patterns used in 40% of all coding interviews.",
     modules: [
       { id: "m1", title: "Hash Maps & Sets", duration: "45 min", type: "lesson", completed: true, description: "Understanding O(1) lookup and when to use it", lesson_id: "l1" },
       { id: "m2", title: "Two Sum Pattern", duration: "30 min", type: "challenge", completed: true, description: "Classic hash map application", challenge_id: "1" },
       { id: "m3", title: "Anagram Detection", duration: "25 min", type: "challenge", completed: true, description: "Frequency counting technique", challenge_id: "2" },
       { id: "m4", title: "Sliding Window Intro", duration: "50 min", type: "lesson", completed: true, description: "Transitioning from arrays to windows", lesson_id: "l2" },
-      { id: "m5", title: "Group Anagrams", duration: "35 min", type: "challenge", completed: true, description: "Advanced grouping with hash maps", challenge_id: "2" },
-      { id: "m6", title: "Arrays & Hashing Quiz", duration: "10 min", type: "quiz", completed: true, description: "Test your conceptual understanding", quiz_id: "arrays" },
+      { id: "m5", title: "Group Anagrams", duration: "35 min", type: "challenge", completed: false, description: "Advanced grouping with hash maps", challenge_id: "2" },
+      { id: "m6", title: "Arrays & Hashing Quiz", duration: "10 min", type: "quiz", completed: false, description: "Test your conceptual understanding", quiz_id: "arrays" },
     ],
     tags: ["Arrays", "Hash Maps", "Interview Prep"],
     instructor: "AI Tutor",
