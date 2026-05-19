@@ -99,11 +99,26 @@ def find_duplicate_transactions(transactions: list) -> list:
     return duplicates
 
 
-# YOUR TASK: O(n) solution using a hash map
+# FIXED: O(n) solution using a hash map
 def find_duplicates_fast(transactions: list) -> list:
-    # Hint: group transactions by amount bucket,
-    # then check timestamps within each group
-    pass
+    seen = {}   # amount -> list of (timestamp, id)
+    duplicates = []
+
+    for txn in transactions:
+        amt = txn['amount']
+        if amt not in seen:
+            seen[amt] = []
+        # Check against all previous txns with same amount
+        for prev_ts, prev_id in seen[amt]:
+            if abs(txn['timestamp'] - prev_ts) <= 1.0:
+                duplicates.append(txn['id'])
+                break
+        seen[amt].append((txn['timestamp'], txn['id']))
+
+    return duplicates
+
+# Time:  O(n) average — hash map lookup O(1), inner loop bounded by duplicates
+# Space: O(n) — at most n entries across all buckets
 `,
     openers: [
       { name: "Sarah K.", role: "Tech Lead", color: "#EF4444", icon: "engineering",    message: "P0 has been live 8 minutes. Payments team is screaming. Fix the O(n²) in the transaction batcher. I want to see your solution in 15 minutes." },

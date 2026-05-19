@@ -10,8 +10,8 @@ const TRACKS = [
     title: "Backend Systems Engineering",
     company: "FinTech Startup",
     description: "A mock 3-day sprint at a Series B fintech startup. You'll debug a payment processing outage, refactor a legacy queue consumer, and ship a rate-limiter under pressure from a demanding Tech Lead.",
-    requiredCourse: "c1",
-    requiredCourseTitle: "Arrays & Hashing Mastery",
+    requiredCourse: null,
+    requiredCourseTitle: "Open — no prerequisite",
     agents: [
       { role: "Tech Lead", name: "Sarah K.", style: "demanding", icon: "engineering", color: "#EF4444" },
       { role: "PM", name: "David L.", style: "confused", icon: "manage_accounts", color: "#F59E0B" },
@@ -71,17 +71,14 @@ const TRACKS = [
 ];
 
 function getUnlockProgress(courseId: string | null): { pct: number; label: string } {
-  if (!courseId) {
-    const avg = SAMPLE_COURSES.reduce((s, c) => s + c.progress, 0) / SAMPLE_COURSES.length;
-    return { pct: Math.round(avg), label: "Complete all courses" };
-  }
+  if (!courseId) return { pct: 100, label: "Open" };
   const course = SAMPLE_COURSES.find(c => c.id === courseId);
   if (!course) return { pct: 0, label: "Course not found" };
   return { pct: course.progress, label: course.title };
 }
 
 function isUnlocked(courseId: string | null): boolean {
-  if (!courseId) return SAMPLE_COURSES.every(c => c.progress >= 100);
+  if (!courseId) return true;
   const course = SAMPLE_COURSES.find(c => c.id === courseId);
   return (course?.progress ?? 0) >= 100;
 }
