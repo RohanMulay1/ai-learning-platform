@@ -1,3 +1,35 @@
+export function showXPToast(amount: number) {
+  if (!document.getElementById("xp-toast-style")) {
+    const style = document.createElement("style");
+    style.id = "xp-toast-style";
+    style.textContent = `
+      @keyframes xpIn {
+        0%   { transform: translateX(130%) scale(0.8); opacity: 0; }
+        18%  { transform: translateX(-6px) scale(1.08); opacity: 1; }
+        25%  { transform: translateX(0) scale(1); }
+        75%  { transform: translateX(0) scale(1); opacity: 1; }
+        100% { transform: translateX(130%) scale(0.9); opacity: 0; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  const toast = document.createElement("div");
+  toast.style.cssText = `
+    position:fixed; top:72px; right:24px; z-index:10000;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    color:#fff; font-family:system-ui,-apple-system,sans-serif;
+    font-size:17px; font-weight:800; letter-spacing:-0.2px;
+    padding:11px 22px; border-radius:999px;
+    box-shadow:0 4px 28px rgba(99,102,241,0.55);
+    pointer-events:none; display:flex; align-items:center; gap:8px;
+    animation:xpIn 2.8s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  `;
+  toast.innerHTML = `<span style="font-size:19px">⚡</span>+${amount} XP`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2850);
+}
+
 interface Particle {
   x: number; y: number;
   vx: number; vy: number;

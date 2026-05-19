@@ -3,7 +3,7 @@ import { SAMPLE_LESSONS, SAMPLE_COURSES } from "../data/sample";
 import { ArrowLeft, ArrowRight, CheckCircle, BookOpen, Code2, Lightbulb, FileText, ChevronDown, ChevronUp } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { cn } from "../lib/utils";
-import { fireConfetti } from "../lib/confetti";
+import { fireConfetti, showXPToast } from "../lib/confetti";
 import { PomodoroWidget } from "../components/productivity/PomodoroWidget";
 import { useLearnerStore } from "../stores/learnerStore";
 import { useProgressStore } from "../stores/store";
@@ -408,6 +408,7 @@ export function LessonPage() {
     setCompleted(true);
     if (lessonId) completeLesson(lessonId, 100);
     fireConfetti();
+    showXPToast(100);
   }
 
   if (!lesson) {
