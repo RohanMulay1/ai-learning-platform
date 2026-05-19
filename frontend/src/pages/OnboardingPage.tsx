@@ -104,10 +104,10 @@ function OptionBtn({ selected, onClick, children }: { selected: boolean; onClick
     <button
       onClick={onClick}
       className={cn(
-        "btn-shine w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-all duration-150 active:scale-[0.98]",
+        "w-full flex items-center gap-4 p-4 rounded-2xl border-2 text-left transition-colors duration-150",
         selected
-          ? "border-[#2EC866] bg-[#D1FAE5] shadow-md"
-          : "border-gray-200 bg-white hover:border-[#2EC866]/40 hover:shadow-sm hover:-translate-y-0.5"
+          ? "border-[#2EC866] bg-[#D1FAE5] shadow-sm"
+          : "border-gray-200 bg-white hover:border-[#2EC866]/50 hover:bg-gray-50"
       )}
     >
       {children}
@@ -117,7 +117,7 @@ function OptionBtn({ selected, onClick, children }: { selected: boolean; onClick
 }
 
 /* ── COMPONENT ─────────────────────────────────────── */
-type Phase = "goal" | "timeline" | "xp" | "quiz" | "result";
+type Phase = "goal" | "timeline" | "xp" | "quiz" | "loading" | "result";
 
 export function OnboardingPage() {
   const navigate = useNavigate();
@@ -158,11 +158,12 @@ export function OnboardingPage() {
         const l = detectLevel(newAnswers);
         setLevel(l);
         setCompleted(l, [goal]);
-        setPhase("result");
-        setAiLoading(true);
+        setPhase("loading");
         const insight = await getAIInsight(l, goal, newAnswers.filter(a => a.correct).length);
         setAiInsight(insight || null);
-        setAiLoading(false);
+        // Show loading screen for at least 2.2s so it feels intentional
+        await new Promise(r => setTimeout(r, 2200));
+        setPhase("result");
       }, 1100);
     } else {
       setTimeout(() => {
@@ -188,7 +189,7 @@ export function OnboardingPage() {
       </div>
 
       {/* Progress dots */}
-      {phase !== "result" && (
+      {phase !== "result" && phase !== "loading" && (
         <div className="flex gap-2 mb-8">
           {PHASES.slice(0, -1).map((p, i) => (
             <div key={p} className={cn("rounded-full transition-all duration-300",
@@ -217,10 +218,10 @@ export function OnboardingPage() {
                   key={g.id}
                   onClick={() => setGoal(g.id)}
                   className={cn(
-                    "btn-shine relative p-5 rounded-2xl border-2 text-left transition-all duration-150 active:scale-[0.98]",
+                    "relative p-5 rounded-2xl border-2 text-left transition-colors duration-150",
                     goal === g.id
-                      ? "border-[#2EC866] bg-[#D1FAE5] shadow-md"
-                      : "border-gray-200 bg-white hover:border-[#2EC866]/40 hover:shadow-sm hover:-translate-y-0.5"
+                      ? "border-[#2EC866] bg-[#D1FAE5] shadow-sm"
+                      : "border-gray-200 bg-white hover:border-[#2EC866]/50 hover:bg-gray-50"
                   )}
                 >
                   {goal === g.id && <CheckCircle className="w-4 h-4 text-[#2EC866] absolute top-3 right-3" />}
@@ -343,7 +344,7 @@ export function OnboardingPage() {
                       key={i}
                       onClick={() => !confirmed && setSelected(i)}
                       disabled={confirmed}
-                      className={cn("btn-shine w-full text-left px-4 py-3.5 rounded-2xl text-sm font-bold transition-all duration-100 flex items-center gap-3 active:scale-[0.98]", cls)}
+                      className={cn("w-full text-left px-4 py-3.5 rounded-2xl text-sm font-bold transition-colors duration-100 flex items-center gap-3", cls)}
                     >
                       <span className={cn("w-7 h-7 rounded-xl flex items-center justify-center text-xs font-extrabold flex-shrink-0 transition-all",
                         confirmed && i === currentQ.correct      ? "bg-emerald-500 text-white" :
@@ -390,6 +391,45 @@ export function OnboardingPage() {
                 {answers.length >= TOTAL_Q ? "Analysing your results…" : "Next question…"}
               </div>
             )}
+          </div>
+        )}
+
+        {/* ── LOADING ── */}
+        {phase === "loading" && (
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            {/* Animated brain icon */}
+            <div className="relative w-20 h-20 mb-8">
+              <div className="w-20 h-20 rounded-2xl bg-[#2EC866] flex items-center justify-center shadow-lg">
+                <span className="text-4xl">🧠</span>
+              </div>
+              {/* Orbit rings */}
+              <div className="absolute inset-0 rounded-2xl border-4 border-[#2EC866]/20 animate-ping" />
+            </div>
+
+            <h2 className="text-2xl font-extrabold text-gray-900 mb-3">
+              Building your learning path…
+            </h2>
+            <p className="text-gray-500 text-sm leading-relaxed mb-8 max-w-xs">
+              Our AI is analyzing your answers and personalizing your curriculum for the fastest path to your goal.
+            </p>
+
+            {/* Animated steps */}
+            <div className="w-full space-y-3">
+              {[
+                { label: "Analyzing skill gaps",         delay: "0s"    },
+                { label: "Selecting optimal courses",    delay: "0.6s"  },
+                { label: "Calibrating difficulty curve", delay: "1.2s"  },
+              ].map((step, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl px-4 py-3 opacity-0"
+                  style={{ animation: `fadeInUp 0.4s ease-out ${step.delay} forwards` }}
+                >
+                  <div className="w-5 h-5 rounded-full border-2 border-[#2EC866]/40 border-t-[#2EC866] animate-spin flex-shrink-0" />
+                  <span className="text-sm font-semibold text-gray-600">{step.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 

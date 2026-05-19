@@ -166,6 +166,12 @@
   50%       { box-shadow: 0 0 35px rgba(46,200,102,0.60); }
 }
 
+/* Onboarding loading steps */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* Page route transition */
 @keyframes pageFadeIn {
   from { opacity: 0; transform: translateY(7px); }
