@@ -7,6 +7,7 @@ import { useProductivityStore } from "../../stores/productivityStore";
 import { PomodoroWidget } from "../productivity/PomodoroWidget";
 import { SAMPLE_CHALLENGES } from "../../data/sample";
 import { cn, diffClass } from "../../lib/utils";
+import { fireConfetti } from "../../lib/confetti";
 import { generateTutorResponse, getProactiveMessage } from "../../agents/tutorAgent";
 import type { TutorContext } from "../../agents/tutorAgent";
 import type { ChallengeCandidate, SkillMastery } from "../../agents/recommendationAgent";
@@ -194,6 +195,7 @@ export function ChallengeWorkspace() {
 
       setSubmitState("passed");
       setOutput("3/3 Cases Passed · Runtime: 52ms · Memory: 16.2MB");
+      fireConfetti();
 
       // Compute behavioral telemetry signals for P_b calculation
       const tel = telemetryRef.current;

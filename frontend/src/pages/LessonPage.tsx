@@ -3,8 +3,10 @@ import { SAMPLE_LESSONS, SAMPLE_COURSES } from "../data/sample";
 import { ArrowLeft, ArrowRight, CheckCircle, BookOpen, Code2, Lightbulb, FileText, ChevronDown, ChevronUp } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { cn } from "../lib/utils";
+import { fireConfetti } from "../lib/confetti";
 import { PomodoroWidget } from "../components/productivity/PomodoroWidget";
 import { useLearnerStore } from "../stores/learnerStore";
+import { useProgressStore } from "../stores/store";
 import { useVoice } from "../hooks/useVoice";
 import type { KnowledgeDoc } from "../stores/learnerStore";
 
@@ -62,7 +64,10 @@ async function callGemini(messages: Msg[], systemPrompt: string): Promise<string
       }),
     }
   );
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  if (!res.ok) {
+    if (res.status === 400 || res.status === 403) throw new Error("NO_KEY");
+    throw new Error(`HTTP ${res.status}`);
+  }
   const data = await res.json();
   const text = data.candidates?.[0]?.content?.parts?.[0]?.text as string | undefined;
   if (!text) throw new Error("Empty response");
@@ -389,9 +394,17 @@ export function LessonPage() {
   const [notesOpen, setNotesOpen] = useState(false);
   const navigate = useNavigate();
   const { knowledgeDocuments } = useLearnerStore();
+  const completeLesson = useProgressStore(s => s.completeLesson);
   const courseTags = SAMPLE_COURSES.find(c => c.id === courseId)?.tags ?? [];
   const relatedDocs = getRelatedDocs(courseTags, knowledgeDocuments);
   const lesson = lessonId ? SAMPLE_LESSONS[lessonId] : null;
+
+  function handleMarkComplete() {
+    if (completed) return;
+    setCompleted(true);
+    if (lessonId) completeLesson(lessonId, 100);
+    fireConfetti();
+  }
 
   if (!lesson) {
     return (
@@ -434,7 +447,7 @@ export function LessonPage() {
             </div>
           ) : (
             <button
-              onClick={() => setCompleted(true)}
+              onClick={handleMarkComplete}
               className="text-sm bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-1.5 rounded-full font-bold transition"
             >
               Mark complete
@@ -554,7 +567,7 @@ export function LessonPage() {
 
               {!completed ? (
                 <button
-                  onClick={() => setCompleted(true)}
+                  onClick={handleMarkComplete}
                   className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-bold px-6 py-2.5 rounded-full transition"
                 >
                   <CheckCircle className="w-4 h-4" /> Mark as complete

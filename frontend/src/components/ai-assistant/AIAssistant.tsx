@@ -115,8 +115,8 @@ async function callGemini(messages: Message[], systemPrompt: string): Promise<st
   );
 
   if (!res.ok) {
-    const body = await res.json().catch(() => ({}));
-    throw new Error(body?.error?.message ?? `HTTP ${res.status}`);
+    if (res.status === 400 || res.status === 403) throw new Error("NO_KEY");
+    throw new Error(`HTTP ${res.status}`);
   }
 
   const data = await res.json();
