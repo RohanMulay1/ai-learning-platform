@@ -1,0 +1,373 @@
+﻿<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Skill Tree | LearnAI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary": "#4ae176",
+                        "surface-container-highest": "#222242",
+                        "inverse-surface": "#fcf8ff",
+                        "secondary-container": "#00461b",
+                        "on-secondary-fixed": "#004a1d",
+                        "tertiary-fixed-dim": "#e79400",
+                        "on-tertiary": "#573500",
+                        "on-secondary-container": "#41da70",
+                        "surface-container": "#17172f",
+                        "on-secondary-fixed-variant": "#006a2d",
+                        "error-container": "#871c34",
+                        "on-secondary": "#004b1e",
+                        "error": "#f97386",
+                        "tertiary": "#ffb148",
+                        "tertiary-fixed": "#f8a010",
+                        "inverse-on-surface": "#545366",
+                        "surface-container-high": "#1d1d37",
+                        "primary-container": "#4334d6",
+                        "outline-variant": "#454567",
+                        "error-dim": "#c44b5f",
+                        "secondary-fixed": "#6bff8f",
+                        "on-tertiary-container": "#4a2c00",
+                        "primary": "#c4c0ff",
+                        "on-error-container": "#ff97a3",
+                        "secondary-dim": "#38d36a",
+                        "surface-variant": "#222242",
+                        "on-primary-container": "#e3e0ff",
+                        "surface": "#0d0d1c",
+                        "surface-container-low": "#111126",
+                        "primary-fixed": "#6c63ff",
+                        "on-error": "#490013",
+                        "secondary-fixed-dim": "#5bf083",
+                        "on-primary-fixed": "#ffffff",
+                        "surface-container-lowest": "#000000",
+                        "surface-dim": "#0d0d1c",
+                        "on-tertiary-fixed-variant": "#563400",
+                        "primary-fixed-dim": "#5f55f1",
+                        "on-background": "#e5e3ff",
+                        "primary-dim": "#675df9",
+                        "surface-tint": "#c4c0ff",
+                        "inverse-primary": "#5044e3",
+                        "background": "#0d0d1c",
+                        "tertiary-container": "#f8a010",
+                        "on-tertiary-fixed": "#2a1700",
+                        "outline": "#727297",
+                        "on-primary-fixed-variant": "#f2eeff",
+                        "on-primary": "#2e15c5",
+                        "on-surface-variant": "#a8a7cf",
+                        "surface-bright": "#292949",
+                        "tertiary-dim": "#e79400",
+                        "on-surface": "#e5e3ff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "display": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Geist Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #0a0a0f;
+            color: #e2e8f0;
+            overflow: hidden;
+        }
+        .node-pulse {
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+        }
+        .skill-graph-svg {
+            pointer-events: none;
+        }
+        .skill-graph-svg line {
+            stroke-width: 1.5;
+            stroke: #1e1e2e;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="flex h-screen w-screen font-body">
+<!-- SideNavBar (from JSON Shared Components) -->
+<aside class="w-16 h-full fixed left-0 top-0 bg-surface flex flex-col items-center py-6 gap-8 border-r border-outline-variant z-50">
+<div class="font-headline font-bold text-primary text-xl">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">terminal</span>
+</div>
+<nav class="flex flex-col gap-6 w-full items-center">
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 ease-in-out">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+</button>
+<!-- Active Tab: Courses (representing Skill Tree / Mastery) -->
+<button class="w-10 h-10 flex items-center justify-center text-primary bg-primary-container/20 rounded-lg transition-colors duration-200 ease-in-out">
+<span class="material-symbols-outlined" data-icon="school">school</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 ease-in-out">
+<span class="material-symbols-outlined" data-icon="code">code</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 ease-in-out">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors duration-200 ease-in-out">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</nav>
+<div class="mt-auto">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden border border-outline-variant">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDobfuBJ4_onUUFAuI7jRGdwfqPqppe0X4Hip63Z3surx31W1U1GiGw_L_KZ3iP3_ghk6-wqSYAAc6GA7E2MqVx0LRdHPVdwZQAf25GXdAQGK8l75KX8Fjbc1rtDgApKmrNFxYkz1yc4NMzZwB1tsZ863ZXQCLLKTULrVrEmy2_fgHv7ejRqFf8iP2VGI0MnQuChDmbZMB1IUgge38tz-GpocmwF0QVIhUtbO-0BEJlDyZliCqZjxNiIpYph1EuUWmn77FHFrzFdn2F"/>
+</div>
+</div>
+</aside>
+<!-- Main Canvas Area -->
+<main class="ml-16 relative flex-grow flex overflow-hidden">
+<!-- Skill Graph Background (SVG Edges) -->
+<svg class="absolute inset-0 w-full h-full skill-graph-svg">
+<!-- Arrays -> Others -->
+<line x1="250" x2="400" y1="350" y2="250"></line> <!-- Arrays to Two Pointers -->
+<line x1="250" x2="400" y1="350" y2="450"></line> <!-- Arrays to Stack -->
+<line x1="250" x2="400" y1="350" y2="600"></line> <!-- Arrays to Binary Search -->
+<!-- Chain: Two Pointers -> Sliding Window -->
+<line x1="400" x2="550" y1="250" y2="200"></line>
+<!-- Chain: Two Pointers -> Linked List -> Trees -> Tries/Heap/Graphs -->
+<line x1="400" x2="550" y1="250" y2="350"></line> <!-- Two Pointers to Linked List -->
+<line x1="550" x2="700" y1="350" y2="450"></line> <!-- Linked List to Trees -->
+<line x1="700" x2="850" y1="450" y2="350"></line> <!-- Trees to Heap -->
+<line x1="700" x2="850" y1="450" y2="450"></line> <!-- Trees to Tries -->
+<line x1="700" x2="850" y1="450" y2="550"></line> <!-- Trees to Graphs -->
+<!-- Graphs -> DP -> Greedy -->
+<line x1="850" x2="1000" y1="550" y2="650"></line> <!-- Graphs to DP -->
+<line x1="1000" x2="1150" y1="650" y2="700"></line> <!-- DP to Greedy -->
+</svg>
+<!-- Skill Nodes (Absolute positioned for manual layout) -->
+<div class="relative w-full h-full p-12">
+<!-- MASTERED NODES -->
+<!-- Arrays & Hashing (Selected/Root) -->
+<div class="absolute group" style="left: 222px; top: 322px;">
+<div class="w-14 h-14 rounded-full bg-secondary flex items-center justify-center node-pulse ring-4 ring-secondary/20 transition-all cursor-pointer">
+<span class="text-on-secondary font-bold text-xs">92%</span>
+</div>
+<div class="mt-2 text-center -ml-8 w-30 whitespace-nowrap">
+<p class="text-sm font-bold text-on-surface">Arrays &amp; Hashing</p>
+</div>
+</div>
+<!-- Two Pointers -->
+<div class="absolute group" style="left: 372px; top: 222px;">
+<div class="w-14 h-14 rounded-full bg-secondary/80 flex items-center justify-center ring-2 ring-secondary transition-all cursor-pointer hover:bg-secondary">
+<span class="text-on-secondary font-bold text-xs">78%</span>
+</div>
+<div class="mt-2 text-center -ml-4 w-30 whitespace-nowrap">
+<p class="text-sm font-bold text-on-surface-variant group-hover:text-on-surface">Two Pointers</p>
+</div>
+</div>
+<!-- Stack -->
+<div class="absolute group" style="left: 372px; top: 422px;">
+<div class="w-14 h-14 rounded-full bg-secondary/70 flex items-center justify-center ring-2 ring-secondary transition-all cursor-pointer hover:bg-secondary">
+<span class="text-on-secondary font-bold text-xs">70%</span>
+</div>
+<div class="mt-2 text-center -ml-2 w-30 whitespace-nowrap">
+<p class="text-sm font-bold text-on-surface-variant group-hover:text-on-surface">Stack</p>
+</div>
+</div>
+<!-- LEARNING NODES -->
+<!-- Sliding Window -->
+<div class="absolute group" style="left: 522px; top: 172px;">
+<div class="w-14 h-14 rounded-full bg-surface border-4 border-tertiary flex items-center justify-center transition-all cursor-pointer hover:border-tertiary-fixed">
+<span class="text-tertiary font-bold text-xs">65%</span>
+</div>
+<div class="mt-2 text-center -ml-6 w-30 whitespace-nowrap">
+<p class="text-sm font-bold text-on-surface-variant group-hover:text-tertiary">Sliding Window</p>
+</div>
+</div>
+<!-- Binary Search -->
+<div class="absolute group" style="left: 372px; top: 572px;">
+<div class="w-14 h-14 rounded-full bg-surface border-4 border-tertiary flex items-center justify-center transition-all cursor-pointer">
+<span class="text-tertiary font-bold text-xs">55%</span>
+</div>
+<div class="mt-2 text-center -ml-6 w-30 whitespace-nowrap">
+<p class="text-sm font-bold text-on-surface-variant">Binary Search</p>
+</div>
+</div>
+<!-- Linked List -->
+<div class="absolute group" style="left: 522px; top: 322px;">
+<div class="w-14 h-14 rounded-full bg-surface border-4 border-tertiary flex items-center justify-center transition-all cursor-pointer">
+<span class="text-tertiary font-bold text-xs">40%</span>
+</div>
+<div class="mt-2 text-center -ml-4 w-30 whitespace-nowrap">
+<p class="text-sm font-bold text-on-surface-variant">Linked List</p>
+</div>
+</div>
+<!-- Trees -->
+<div class="absolute group" style="left: 672px; top: 422px;">
+<div class="w-14 h-14 rounded-full bg-surface border-4 border-tertiary flex items-center justify-center transition-all cursor-pointer">
+<span class="text-tertiary font-bold text-xs">25%</span>
+</div>
+<div class="mt-2 text-center w-30 whitespace-nowrap">
+<p class="text-sm font-bold text-on-surface-variant">Trees</p>
+</div>
+</div>
+<!-- LOCKED NODES -->
+<div class="absolute group opacity-60" style="left: 822px; top: 322px;">
+<div class="w-14 h-14 rounded-full bg-surface border-2 border-outline flex items-center justify-center">
+<span class="material-symbols-outlined text-outline" data-icon="lock">lock</span>
+</div>
+<div class="mt-2 text-center w-30 whitespace-nowrap">
+<p class="text-xs font-bold text-outline">Heap</p>
+</div>
+</div>
+<div class="absolute group opacity-60" style="left: 822px; top: 422px;">
+<div class="w-14 h-14 rounded-full bg-surface border-2 border-outline flex items-center justify-center">
+<span class="material-symbols-outlined text-outline" data-icon="lock">lock</span>
+</div>
+<div class="mt-2 text-center w-30 whitespace-nowrap">
+<p class="text-xs font-bold text-outline">Tries</p>
+</div>
+</div>
+<div class="absolute group opacity-60" style="left: 822px; top: 522px;">
+<div class="w-14 h-14 rounded-full bg-surface border-2 border-outline flex items-center justify-center">
+<span class="material-symbols-outlined text-outline" data-icon="lock">lock</span>
+</div>
+<div class="mt-2 text-center w-30 whitespace-nowrap">
+<p class="text-xs font-bold text-outline">Graphs</p>
+</div>
+</div>
+<div class="absolute group opacity-60" style="left: 972px; top: 622px;">
+<div class="w-14 h-14 rounded-full bg-surface border-2 border-outline flex items-center justify-center">
+<span class="material-symbols-outlined text-outline" data-icon="lock">lock</span>
+</div>
+<div class="mt-2 text-center -ml-8 w-30 whitespace-nowrap">
+<p class="text-xs font-bold text-outline">Dynamic Programming</p>
+</div>
+</div>
+<div class="absolute group opacity-60" style="left: 1122px; top: 672px;">
+<div class="w-14 h-14 rounded-full bg-surface border-2 border-outline flex items-center justify-center">
+<span class="material-symbols-outlined text-outline" data-icon="lock">lock</span>
+</div>
+<div class="mt-2 text-center w-30 whitespace-nowrap">
+<p class="text-xs font-bold text-outline">Greedy</p>
+</div>
+</div>
+</div>
+<!-- Overlays: Legend (Top-Left) -->
+<div class="absolute top-6 left-6 flex gap-4 bg-surface/50 backdrop-blur-md p-3 rounded-xl border border-outline-variant z-10">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="text-xs font-medium text-on-surface-variant">Mastered</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary"></span>
+<span class="text-xs font-medium text-on-surface-variant">Learning</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+<span class="text-xs font-medium text-on-surface-variant">Locked</span>
+</div>
+</div>
+<!-- Overlays: Search & Filter (Top-Right) -->
+<div class="absolute top-6 right-[304px] flex gap-3 z-10">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-sm">search</span>
+<input class="bg-surface/50 border border-outline-variant rounded-lg pl-9 pr-4 py-2 text-sm w-64 focus:border-primary-fixed focus:ring-0 backdrop-blur-md" placeholder="Search skills..." type="text"/>
+</div>
+<button class="bg-surface/50 border border-outline-variant rounded-lg px-4 py-2 text-sm font-medium flex items-center gap-2 hover:bg-surface-container transition-colors backdrop-blur-md">
+<span>All Categories</span>
+<span class="material-symbols-outlined text-sm">expand_more</span>
+</button>
+</div>
+<!-- Detail Panel (Right Side) -->
+<aside class="w-[280px] h-full bg-surface border-l border-outline-variant p-6 flex flex-col z-20">
+<!-- Header Section -->
+<div class="mb-8">
+<div class="flex justify-between items-start mb-2">
+<h2 class="text-xl font-black text-on-surface tracking-tight">Arrays &amp; Hashing</h2>
+<button class="text-on-surface-variant hover:text-on-surface">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+<span class="bg-secondary-container text-secondary text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">Data Structures</span>
+</div>
+<!-- Progress Visualization -->
+<div class="flex flex-col items-center mb-8">
+<div class="relative w-32 h-32">
+<!-- Donut Chart Placeholder -->
+<svg class="w-full h-full -rotate-90">
+<circle cx="64" cy="64" fill="transparent" r="56" stroke="#1e1e2e" stroke-width="8"></circle>
+<circle cx="64" cy="64" fill="transparent" r="56" stroke="#22c55e" stroke-dasharray="351.85" stroke-dashoffset="28.1" stroke-linecap="round" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-2xl font-black text-on-surface">92%</span>
+<span class="text-[10px] text-on-surface-variant uppercase font-bold">Mastery</span>
+</div>
+</div>
+</div>
+<!-- Stats -->
+<div class="space-y-4 mb-8">
+<div class="flex items-center justify-between p-3 bg-surface-container rounded-lg border border-outline-variant/30">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary text-sm">check_circle</span>
+<span class="text-xs text-on-surface-variant">Solved</span>
+</div>
+<span class="text-xs font-bold text-on-surface">14 problems</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container rounded-lg border border-outline-variant/30">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-sm">schedule</span>
+<span class="text-xs text-on-surface-variant">Time Spent</span>
+</div>
+<span class="text-xs font-bold text-on-surface">Est. 8 hours</span>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container rounded-lg border border-outline-variant/30">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-tertiary text-sm">star</span>
+<span class="text-xs text-on-surface-variant">Difficulty</span>
+</div>
+<div class="flex gap-0.5">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="material-symbols-outlined text-[12px]">star</span>
+<span class="material-symbols-outlined text-[12px]">star</span>
+<span class="material-symbols-outlined text-[12px]">star</span>
+</div>
+</div>
+</div>
+<!-- Dependencies -->
+<div class="mb-8">
+<p class="text-[10px] font-black text-on-surface-variant uppercase tracking-widest mb-3">Prerequisite for:</p>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-surface-container-high border border-outline-variant text-[11px] text-on-surface rounded-md">Two Pointers</span>
+<span class="px-2 py-1 bg-surface-container-high border border-outline-variant text-[11px] text-on-surface rounded-md">Stack</span>
+<span class="px-2 py-1 bg-surface-container-high border border-outline-variant text-[11px] text-on-surface rounded-md">Binary Search</span>
+</div>
+</div>
+<!-- CTA -->
+<div class="mt-auto space-y-4">
+<button class="w-full bg-primary-fixed hover:bg-primary-dim text-white font-bold py-3 rounded-xl transition-all active:scale-[0.98]">
+                    Practice Now
+                </button>
+<button class="w-full flex items-center justify-center gap-2 text-primary-fixed font-bold text-sm hover:underline">
+                    View Challenges
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</aside>
+</main>
+<!-- Background Decoration -->
+<div class="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+<div class="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] bg-primary/10 rounded-full blur-[120px]"></div>
+<div class="absolute bottom-[-10%] right-[-5%] w-[40%] h-[40%] bg-secondary/10 rounded-full blur-[120px]"></div>
+</div>
+</body></html>

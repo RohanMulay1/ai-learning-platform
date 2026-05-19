@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root { --radius: 0.75rem; }
+  * { box-sizing: border-box; }
+
+  html, body {
+    background-color: #F5F7FA;
+    color: #111827;
+    font-family: 'Google Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 10px; }
+  ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    font-family: 'Material Symbols Outlined';
+    font-style: normal;
+    display: inline-block;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+  }
+}
+
+@layer utilities {
+  /* Light card — white surface */
+  .glass-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+
+  /* Elevated card */
+  .glass {
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+
+  /* Code editor — stays dark */
+  .code-editor {
+    font-family: 'Geist Mono', monospace;
+    background-color: #0d1117;
+    color: #e2e8f0;
+  }
+
+  /* Syntax highlighting */
+  .syntax-keyword  { color: #ff7b72; }
+  .syntax-function { color: #d2a8ff; }
+  .syntax-string   { color: #a5d6ff; }
+  .syntax-comment  { color: #8b949e; }
+
+  /* Mastered node glow */
+  .node-pulse {
+    box-shadow: 0 0 20px rgba(46, 200, 102, 0.35);
+    animation: nodePulse 2s ease-in-out infinite;
+  }
+
+  /* Grid overlay */
+  .grid-overlay {
+    background-image: linear-gradient(#E5E7EB 1px, transparent 1px),
+                      linear-gradient(90deg, #E5E7EB 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  /* Scrollbar hide */
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Primary button */
+  .btn-primary {
+    @apply relative overflow-hidden bg-[#2EC866] hover:bg-[#1EA34E] active:scale-95 text-white font-bold rounded-xl px-6 py-3 transition-all duration-150 inline-flex items-center justify-center gap-2 select-none shadow-sm;
+  }
+
+  /* Secondary button */
+  .btn-secondary {
+    @apply relative overflow-hidden bg-white hover:bg-gray-50 active:scale-95 text-gray-800 font-bold rounded-xl px-6 py-3 border border-gray-200 transition-all duration-150 inline-flex items-center justify-center gap-2 select-none shadow-sm;
+  }
+
+  /* Light card */
+  .card {
+    @apply bg-white rounded-2xl border border-gray-200 shadow-card;
+  }
+
+  /* Tag / badge chip */
+  .tag {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-bold;
+  }
+
+  /* Skill graph SVG edges */
+  .skill-graph-svg {
+    pointer-events: none;
+  }
+  .skill-graph-svg line {
+    stroke: #D1D5DB;
+    stroke-width: 1.5;
+  }
+
+  /* Workspace keeps dark theme for code editing UX */
+  .workspace-dark {
+    background-color: #0a0a0f;
+    color: #e2e8f0;
+  }
+}
+
+/* ── Button shine sweep on hover ─────────────────────────────── */
+.btn-primary::after,
+.btn-secondary::after,
+.btn-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -80%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.26), transparent);
+  transform: skewX(-18deg);
+  pointer-events: none;
+  border-radius: inherit;
+}
+.btn-primary:hover::after,
+.btn-secondary:hover::after,
+.btn-shine:hover::after {
+  animation: btnShine 0.52s ease-out forwards;
+}
+
+@keyframes btnShine {
+  0%   { left: -80%; }
+  100% { left: 130%; }
+}
+
+/* Daily challenge animated gradient */
+@keyframes gradShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.daily-hero-gradient {
+  background: linear-gradient(270deg, #6366F1, #8B5CF6, #A855F7, #EC4899, #8B5CF6, #6366F1);
+  background-size: 400% 400%;
+  animation: gradShift 8s ease infinite;
+}
+
+/* Daily challenge pulse ring */
+@keyframes dailyPulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%       { opacity: 0; transform: scale(1.15); }
+}
+
+@keyframes nodePulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(46,200,102,0.35); }
+  50%       { box-shadow: 0 0 35px rgba(46,200,102,0.60); }
+}
+
+/* Page route transition */
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(7px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter {
+  animation: pageFadeIn 0.18s ease-out both;
+}

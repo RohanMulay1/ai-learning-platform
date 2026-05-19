@@ -1,0 +1,274 @@
+﻿<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Review Queue | LearnAI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Geist+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-dim": "#0d0d1c",
+                    "secondary-fixed": "#6bff8f",
+                    "on-tertiary-fixed": "#2a1700",
+                    "tertiary-container": "#f8a010",
+                    "surface-tint": "#c4c0ff",
+                    "tertiary-dim": "#e79400",
+                    "surface-container": "#17172f",
+                    "surface-container-low": "#111126",
+                    "on-surface-variant": "#a8a7cf",
+                    "inverse-primary": "#5044e3",
+                    "outline": "#727297",
+                    "on-secondary-fixed": "#004a1d",
+                    "tertiary-fixed": "#f8a010",
+                    "primary-fixed-dim": "#5f55f1",
+                    "on-tertiary": "#573500",
+                    "tertiary": "#ffb148",
+                    "outline-variant": "#454567",
+                    "error-dim": "#c44b5f",
+                    "on-error": "#490013",
+                    "surface-container-lowest": "#000000",
+                    "on-tertiary-container": "#4a2c00",
+                    "surface": "#0d0d1c",
+                    "primary-dim": "#675df9",
+                    "secondary-container": "#00461b",
+                    "background": "#0d0d1c",
+                    "secondary-fixed-dim": "#5bf083",
+                    "on-secondary-fixed-variant": "#006a2d",
+                    "error": "#f97386",
+                    "inverse-on-surface": "#545366",
+                    "on-error-container": "#ff97a3",
+                    "surface-container-high": "#1d1d37",
+                    "tertiary-fixed-dim": "#e79400",
+                    "on-tertiary-fixed-variant": "#563400",
+                    "primary-container": "#4334d6",
+                    "surface-container-highest": "#222242",
+                    "inverse-surface": "#fcf8ff",
+                    "on-background": "#e5e3ff",
+                    "on-secondary-container": "#41da70",
+                    "secondary-dim": "#38d36a",
+                    "on-primary-fixed-variant": "#f2eeff",
+                    "error-container": "#871c34",
+                    "secondary": "#4ae176",
+                    "primary-fixed": "#6c63ff",
+                    "on-secondary": "#004b1e",
+                    "on-primary": "#2e15c5",
+                    "primary": "#c4c0ff",
+                    "surface-bright": "#292949",
+                    "on-primary-fixed": "#ffffff",
+                    "on-primary-container": "#e3e0ff",
+                    "surface-variant": "#222242",
+                    "on-surface": "#e5e3ff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "display": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Geist Mono"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #0a0a0f; color: #e2e8f0; font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-card { background: #12121a; border: 1px solid #1e1e2e; box-shadow: 0 0 40px -10px rgba(108, 99, 255, 0.15); }
+        .progress-track { background: #1e1e2e; }
+        .progress-fill { background: #6c63ff; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0f; }
+        ::-webkit-scrollbar-thumb { background: #1e1e2e; border-radius: 10px; }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- SideNavBar Component -->
+<nav class="h-screen w-[64px] left-0 fixed flex flex-col items-center py-4 border-r border-outline-variant dark:border-outline-variant bg-surface-dim dark:bg-surface-dim z-50">
+<div class="flex flex-col items-center gap-6 h-full">
+<div class="mb-4">
+<span class="font-headline font-bold text-primary dark:text-primary-dim text-2xl tracking-tighter">AI</span>
+</div>
+<!-- Dashboard (Active) -->
+<button class="w-12 h-12 flex items-center justify-center rounded-xl text-primary dark:text-primary-dim border-r-2 border-primary dark:border-primary-dim bg-primary-container/10 Active: scale-95 transition-all">
+<span class="material-symbols-outlined">dashboard</span>
+</button>
+<button class="w-12 h-12 flex items-center justify-center rounded-xl text-on-surface-variant dark:text-on-surface-variant opacity-70 hover:bg-surface-container-high transition-colors Active: scale-95">
+<span class="material-symbols-outlined">menu_book</span>
+</button>
+<button class="w-12 h-12 flex items-center justify-center rounded-xl text-on-surface-variant dark:text-on-surface-variant opacity-70 hover:bg-surface-container-high transition-colors Active: scale-95">
+<span class="material-symbols-outlined">code_blocks</span>
+</button>
+<button class="w-12 h-12 flex items-center justify-center rounded-xl text-on-surface-variant dark:text-on-surface-variant opacity-70 hover:bg-surface-container-high transition-colors Active: scale-95">
+<span class="material-symbols-outlined">leaderboard</span>
+</button>
+<div class="mt-auto">
+<button class="w-12 h-12 flex items-center justify-center rounded-xl text-on-surface-variant dark:text-on-surface-variant opacity-70 hover:bg-surface-container-high transition-colors Active: scale-95">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- TopAppBar Component -->
+<header class="fixed top-0 right-0 left-[64px] h-16 z-40 bg-surface-dim/80 dark:bg-surface-dim/80 backdrop-blur-md border-b border-outline-variant dark:border-outline-variant">
+<div class="flex justify-between items-center px-6 w-full h-full gap-4">
+<div class="flex items-center gap-4">
+<span class="text-xl font-black tracking-tighter text-on-surface dark:text-on-surface">LearnAI</span>
+<span class="px-2 py-0.5 rounded bg-primary-container text-[10px] font-bold text-on-primary-container tracking-widest uppercase">PRO</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-on-surface-variant">
+<div class="flex items-center gap-1 group cursor-pointer transition-colors hover:text-primary">
+<span class="material-symbols-outlined text-orange-500" style="font-variation-settings: 'FILL' 1;">local_fire_department</span>
+<span class="text-sm font-bold">12</span>
+</div>
+<div class="flex items-center gap-1 group cursor-pointer transition-colors hover:text-primary">
+<span class="material-symbols-outlined text-yellow-500" style="font-variation-settings: 'FILL' 1;">stars</span>
+<span class="text-sm font-bold">1,240</span>
+</div>
+<button class="material-symbols-outlined hover:text-primary transition-colors">notifications</button>
+</div>
+<div class="h-8 w-8 rounded-full bg-surface-container-highest border border-outline-variant overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDx083pJgQtsFRIlb7RkmNkJMB2XB3wTF3Ll-Fhq4tAnPj8eMEwxc0jQZ_LtJHoo-BmiotfnWNHJJNjG_79GwXP0TZPmdWe_0049zsbIh_TrGy33D5glPWmaPusAyQBiwvavv9liNxi3YrU3flo8fCWG4oX0NWiVK0VX3FV3B34gwmP05sR0ULDrjK8MPmWEmnYRkjwlE1eeuo7r2GRkIvGmBQ0cxd3gYS8lOVCtfX6pSSddYugCBlY6uLU0vL3fSNwTGAhrHoWSfWH"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="ml-[64px] pt-16 min-h-screen flex items-center justify-center relative overflow-hidden">
+<!-- Background Ambient Glow -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+<section class="w-full max-w-[680px] px-6 py-12 flex flex-col items-center">
+<!-- TOP SECTION -->
+<div class="w-full mb-8 text-center sm:text-left">
+<div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-6">
+<div>
+<h1 class="text-3xl font-extrabold text-on-surface tracking-tight">Review Queue</h1>
+<p class="text-on-surface-variant mt-1">4 of 9 cards due today</p>
+</div>
+<div class="flex flex-wrap gap-4 text-[11px] font-medium tracking-tight text-on-surface-variant uppercase opacity-80">
+<span class="flex items-center gap-1"><span class="text-secondary-dim font-bold">84%</span> retention</span>
+<span class="flex items-center gap-1"><span class="text-primary font-bold">8.2</span> avg interval</span>
+<span class="flex items-center gap-1"><span class="text-on-surface font-bold">127</span> total cards</span>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="relative w-full h-1.5 progress-track rounded-full overflow-hidden">
+<div class="absolute top-0 left-0 h-full progress-fill w-[0%] transition-all duration-500"></div>
+</div>
+<div class="flex justify-between mt-2">
+<span class="text-[10px] font-bold text-primary-fixed uppercase tracking-wider">Session Progress</span>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">0/4 Reviewed</span>
+</div>
+</div>
+<!-- FLASHCARD -->
+<div class="w-full glass-card rounded-2xl p-8 mb-8 relative group cursor-pointer transition-transform hover:scale-[1.01] active:scale-[0.99]">
+<div class="flex flex-col gap-6">
+<div>
+<div class="flex items-center gap-3 mb-4">
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-[10px] font-bold uppercase tracking-wider border border-secondary/20">Easy</span>
+<span class="px-2.5 py-0.5 rounded-full bg-primary-container text-on-primary-container text-[10px] font-bold uppercase tracking-wider border border-primary/20">Two Pointers</span>
+</div>
+<h2 class="text-2xl font-bold text-on-surface mb-2 leading-tight">Best Time to Buy and Sell Stock</h2>
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant text-[10px] font-medium border border-outline-variant/30">Amazon</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant text-[10px] font-medium border border-outline-variant/30">Goldman Sachs</span>
+</div>
+</div>
+<div class="py-4 border-y border-outline-variant/20 flex flex-col gap-4">
+<div class="flex items-center gap-2 text-xs text-on-surface-variant italic">
+<span class="material-symbols-outlined text-sm">history</span>
+                            Last reviewed 6 days ago â¢ Interval: 6 days
+                        </div>
+<p class="text-on-surface leading-relaxed font-medium">
+                            Find the maximum profit from a single buy-sell transaction in an array of stock prices. 
+                        </p>
+</div>
+<div class="flex justify-center py-4">
+<span class="text-sm italic text-primary/60 flex items-center gap-2 group-hover:text-primary transition-colors">
+                            Tap to recall your solution...
+                            <span class="material-symbols-outlined text-base">touch_app</span>
+</span>
+</div>
+</div>
+</div>
+<!-- QUALITY RATING BUTTONS -->
+<div class="w-full flex flex-col gap-4">
+<div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+<!-- Rating 0 -->
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-full aspect-square sm:h-12 rounded-lg bg-error-container text-on-error-container flex items-center justify-center font-bold text-lg group-hover:brightness-110 transition-all border border-error/20">0</div>
+<div class="flex flex-col items-center">
+<span class="text-[10px] font-bold uppercase text-on-surface opacity-80">Forgot</span>
+<span class="text-[10px] font-label text-error-dim">â 1d</span>
+</div>
+</button>
+<!-- Rating 1 -->
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-full aspect-square sm:h-12 rounded-lg bg-orange-950 text-orange-400 flex items-center justify-center font-bold text-lg group-hover:brightness-110 transition-all border border-orange-500/20">1</div>
+<div class="flex flex-col items-center">
+<span class="text-[10px] font-bold uppercase text-on-surface opacity-80">Hard</span>
+<span class="text-[10px] font-label text-orange-400">â 2d</span>
+</div>
+</button>
+<!-- Rating 2 -->
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-full aspect-square sm:h-12 rounded-lg bg-tertiary-container/30 text-tertiary flex items-center justify-center font-bold text-lg group-hover:brightness-110 transition-all border border-tertiary/20">2</div>
+<div class="flex flex-col items-center">
+<span class="text-[10px] font-bold uppercase text-on-surface opacity-80">OK</span>
+<span class="text-[10px] font-label text-tertiary">â 4d</span>
+</div>
+</button>
+<!-- Rating 3 -->
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-full aspect-square sm:h-12 rounded-lg bg-blue-950 text-blue-400 flex items-center justify-center font-bold text-lg group-hover:brightness-110 transition-all border border-blue-500/20">3</div>
+<div class="flex flex-col items-center">
+<span class="text-[10px] font-bold uppercase text-on-surface opacity-80">Good</span>
+<span class="text-[10px] font-label text-blue-400">â 8d</span>
+</div>
+</button>
+<!-- Rating 4 -->
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-full aspect-square sm:h-12 rounded-lg bg-secondary-container text-secondary flex items-center justify-center font-bold text-lg group-hover:brightness-110 transition-all border border-secondary/20">4</div>
+<div class="flex flex-col items-center">
+<span class="text-[10px] font-bold uppercase text-on-surface opacity-80">Easy</span>
+<span class="text-[10px] font-label text-secondary">â 14d</span>
+</div>
+</button>
+<!-- Rating 5 -->
+<button class="flex flex-col items-center gap-2 group">
+<div class="w-full aspect-square sm:h-12 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center font-bold text-lg group-hover:brightness-110 transition-all border border-primary/20">5</div>
+<div class="flex flex-col items-center">
+<span class="text-[10px] font-bold uppercase text-on-surface opacity-80">Perfect!</span>
+<span class="text-[10px] font-label text-primary">â 30d</span>
+</div>
+</button>
+</div>
+</div>
+<!-- BOTTOM ACTIONS -->
+<div class="w-full mt-12 flex justify-between items-center text-on-surface-variant">
+<button class="text-sm font-medium hover:text-on-surface transition-colors flex items-center gap-2">
+                    Skip for now 
+                    <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+<div class="flex items-center gap-2 px-3 py-1 bg-surface-container rounded-full border border-outline-variant/30">
+<div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+<span class="text-xs font-bold uppercase tracking-widest text-primary-fixed">4 remaining</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Visual Polish: Grid Overlay -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] z-[1]" style="background-image: linear-gradient(#6c63ff 1px, transparent 1px), linear-gradient(90deg, #6c63ff 1px, transparent 1px); background-size: 60px 60px;"></div>
+</body></html>

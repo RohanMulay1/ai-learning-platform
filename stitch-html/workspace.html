@@ -1,0 +1,319 @@
+﻿<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>LearnAI Challenge Workspace - Two Sum</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "background": "#0a0a0f",
+                        "on-secondary-fixed": "#004a1d",
+                        "surface-variant": "#222242",
+                        "surface-container": "#17172f",
+                        "primary-fixed": "#6c63ff",
+                        "on-primary-fixed": "#ffffff",
+                        "surface-dim": "#0d0d1c",
+                        "inverse-on-surface": "#545366",
+                        "surface-bright": "#292949",
+                        "tertiary-fixed": "#f8a010",
+                        "primary-container": "#4334d6",
+                        "error": "#f97386",
+                        "secondary-fixed-dim": "#5bf083",
+                        "on-surface-variant": "#a8a7cf",
+                        "error-dim": "#c44b5f",
+                        "error-container": "#871c34",
+                        "on-tertiary-fixed-variant": "#563400",
+                        "on-secondary-fixed-variant": "#006a2d",
+                        "surface-container-lowest": "#000000",
+                        "surface-tint": "#c4c0ff",
+                        "on-error": "#490013",
+                        "tertiary-container": "#f8a010",
+                        "on-secondary-container": "#41da70",
+                        "outline-variant": "#1e1e2e",
+                        "primary-fixed-dim": "#5f55f1",
+                        "on-surface": "#e2e8f0",
+                        "on-tertiary": "#573500",
+                        "tertiary-dim": "#e79400",
+                        "secondary-dim": "#38d36a",
+                        "secondary-fixed": "#6bff8f",
+                        "surface-container-highest": "#222242",
+                        "secondary": "#22c55e",
+                        "on-tertiary-container": "#4a2c00",
+                        "primary-dim": "#675df9",
+                        "on-background": "#e5e3ff",
+                        "primary": "#6c63ff",
+                        "inverse-primary": "#5044e3",
+                        "surface": "#12121a",
+                        "on-tertiary-fixed": "#2a1700",
+                        "tertiary": "#fbbf24",
+                        "on-secondary": "#004b1e",
+                        "outline": "#1e1e2e",
+                        "on-primary-fixed-variant": "#f2eeff",
+                        "on-error-container": "#ff97a3",
+                        "surface-container-high": "#1d1d37",
+                        "on-primary-container": "#e3e0ff",
+                        "on-primary": "#2e15c5",
+                        "inverse-surface": "#fcf8ff",
+                        "secondary-container": "#00461b",
+                        "tertiary-dim": "#e79400",
+                        "surface-container-low": "#111126"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "code": ["Geist Mono", "monospace"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0f; color: #e2e8f0; overflow: hidden; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass { background: rgba(18, 18, 26, 0.7); backdrop-filter: blur(12px); border: 1px solid #1e1e2e; }
+        .code-editor { font-family: 'Geist Mono', monospace; background-color: #0d1117; }
+        .syntax-keyword { color: #ff7b72; }
+        .syntax-function { color: #d2a8ff; }
+        .syntax-string { color: #a5d6ff; }
+        .syntax-comment { color: #8b949e; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+<!-- TopNavBar (Shared Component Inspired) -->
+<header class="flex justify-between items-center px-4 h-14 w-full z-50 bg-background border-b border-outline-variant">
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-surface-variant rounded-lg transition-colors active:scale-95">
+<span class="material-symbols-outlined text-on-surface-variant">arrow_back</span>
+</button>
+<div class="flex items-center gap-3">
+<h1 class="text-on-surface font-headline font-bold text-base tracking-tight">Two Sum</h1>
+<span class="px-2 py-0.5 rounded-full bg-secondary/10 text-secondary text-[10px] font-bold uppercase tracking-wider border border-secondary/20">Easy</span>
+<div class="hidden md:flex items-center gap-1.5 ml-2">
+<span class="px-2 py-0.5 rounded bg-surface text-on-surface-variant text-[10px] border border-outline-variant">Google</span>
+<span class="px-2 py-0.5 rounded bg-surface text-on-surface-variant text-[10px] border border-outline-variant">Amazon</span>
+<span class="px-2 py-0.5 rounded bg-surface text-on-surface-variant text-[10px] border border-outline-variant">Apple</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 text-tertiary bg-tertiary/10 px-3 py-1 rounded-md border border-tertiary/20">
+<span class="material-symbols-outlined text-sm">timer</span>
+<span class="font-code text-sm font-medium">23:45</span>
+</div>
+<div class="h-6 w-px bg-outline-variant"></div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded-lg border border-outline-variant text-on-surface-variant text-sm font-medium hover:bg-surface-variant transition-all">Hint</button>
+<button class="px-4 py-1.5 rounded-lg bg-primary-fixed text-on-primary-fixed text-sm font-bold shadow-lg shadow-primary-fixed/20 active:scale-95 transition-all">Submit</button>
+</div>
+<div class="flex items-center gap-2 ml-2">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-on-surface">settings</span>
+<div class="w-8 h-8 rounded-full bg-surface-container border border-outline-variant flex items-center justify-center overflow-hidden">
+<img alt="Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCvx1VIZsQqlLpp8ManNNdFtwCAiIFQC5lCNsroaFChQBeyVLHyjFbWg9JMqSVCZkU3ptMf3AbyHHgq25uml0rb5TyGVZaT4CgrRU1JWxCtBpXE4BQpSffVGSe0ACCskC3GZU2EP1RWeY9UE37iA3VPygkq0ZSV-tWqKU5jcPWm1kXLh9w7ETMZMkzjBOqkXT4zIDyO-iPF53g1anS0Rg7EbauDYX46tZlDwbtP0G6igcJKQmd6bbqzFXWspubzk3_Yqb_FS4Kd9i4"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Workspace -->
+<main class="flex-1 flex overflow-hidden">
+<!-- LEFT PANE: Problem Description -->
+<section class="w-[48%] flex flex-col border-r border-outline-variant bg-background relative">
+<nav class="flex border-b border-outline-variant px-4 bg-surface-container-low">
+<button class="px-4 py-3 text-xs font-bold text-on-primary-fixed border-b-2 border-primary-fixed">Problem</button>
+<button class="px-4 py-3 text-xs font-medium text-on-surface-variant hover:text-on-surface transition-colors">Examples</button>
+<button class="px-4 py-3 text-xs font-medium text-on-surface-variant hover:text-on-surface transition-colors">Hints</button>
+<button class="px-4 py-3 text-xs font-medium text-on-surface-variant hover:text-on-surface transition-colors">Discussion</button>
+</nav>
+<div class="flex-1 overflow-y-auto p-6 scrollbar-hide">
+<div class="prose prose-invert max-w-none">
+<h2 class="text-xl font-bold text-on-surface mb-4">Problem Statement</h2>
+<p class="text-on-surface-variant leading-relaxed text-sm mb-6">
+                        Given an array of integers <code class="bg-surface-variant px-1 rounded font-code text-on-surface text-xs">nums</code> and an integer <code class="bg-surface-variant px-1 rounded font-code text-on-surface text-xs">target</code>, return indices of the two numbers such that they add up to <code class="bg-surface-variant px-1 rounded font-code text-on-surface text-xs">target</code>.
+                    </p>
+<p class="text-on-surface-variant leading-relaxed text-sm mb-6">
+                        You may assume that each input would have <strong class="text-on-surface">exactly one solution</strong>, and you may not use the same element twice. You can return the answer in any order.
+                    </p>
+<div class="mb-8">
+<h3 class="text-sm font-bold text-on-surface mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">code</span>
+                            Example 1
+                        </h3>
+<div class="bg-surface p-4 rounded-xl border border-outline-variant font-code text-xs">
+<div class="mb-2"><span class="text-on-surface-variant">Input:</span> nums = [2,7,11,15], target = 9</div>
+<div class="mb-2"><span class="text-on-surface-variant">Output:</span> [0,1]</div>
+<div class="text-on-surface-variant italic">Explanation: Because nums[0] + nums[1] == 9, we return [0, 1].</div>
+</div>
+</div>
+<div class="mb-8">
+<h3 class="text-sm font-bold text-on-surface mb-3">Constraints:</h3>
+<ul class="space-y-2 list-none p-0">
+<li class="flex items-start gap-2 text-xs text-on-surface-variant">
+<span class="text-primary-fixed">â¢</span>
+<span>2 &lt;= nums.length &lt;= 10<sup>4</sup></span>
+</li>
+<li class="flex items-start gap-2 text-xs text-on-surface-variant">
+<span class="text-primary-fixed">â¢</span>
+<span>-10<sup>9</sup> &lt;= nums[i] &lt;= 10<sup>9</sup></span>
+</li>
+<li class="flex items-start gap-2 text-xs text-on-surface-variant">
+<span class="text-primary-fixed">â¢</span>
+<span>-10<sup>9</sup> &lt;= target &lt;= 10<sup>9</sup></span>
+</li>
+<li class="flex items-start gap-2 text-xs text-on-surface-variant font-medium text-on-surface">
+<span class="text-primary-fixed">â¢</span>
+<span>Only one valid answer exists.</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- AI Tutor FAB -->
+<button class="absolute bottom-6 right-6 flex items-center gap-3 px-5 py-3 bg-primary-fixed rounded-full shadow-[0_0_20px_rgba(108,99,255,0.4)] hover:shadow-[0_0_30px_rgba(108,99,255,0.6)] transition-all group">
+<span class="material-symbols-outlined text-on-primary-fixed" data-weight="fill">smart_toy</span>
+<span class="text-on-primary-fixed font-bold text-sm">AI Tutor</span>
+</button>
+</section>
+<!-- RIGHT PANE: Code Editor & Execution -->
+<section class="w-[52%] flex flex-col bg-[#0d1117]">
+<!-- Editor Header -->
+<div class="flex justify-between items-center px-4 h-11 border-b border-[#1e1e2e] bg-surface-container-low">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">terminal</span>
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">solution.py</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 px-2 py-1 rounded bg-background border border-outline-variant cursor-pointer group">
+<span class="text-[11px] font-medium text-on-surface-variant group-hover:text-on-surface">Python 3</span>
+<span class="material-symbols-outlined text-sm text-on-surface-variant">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Code Editor Surface -->
+<div class="flex-1 flex overflow-hidden">
+<!-- Line Numbers -->
+<div class="w-12 bg-[#0d1117] flex flex-col items-center py-4 text-on-surface-variant/30 font-code text-xs select-none border-r border-[#1e1e2e]/30">
+<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+</div>
+<!-- Editor Code -->
+<div class="flex-1 p-4 font-code text-sm leading-relaxed overflow-y-auto">
+<div><span class="syntax-keyword">class</span> <span class="syntax-function">Solution</span>:</div>
+<div class="pl-4"><span class="syntax-keyword">def</span> <span class="syntax-function">twoSum</span>(self, nums: List[int], target: int) -&gt; List[int]:</div>
+<div class="pl-8"><span class="syntax-comment"># Optimized solution using hash map</span></div>
+<div class="pl-8">prevMap = {} <span class="syntax-comment"># val : index</span></div>
+<div class="pl-8 mt-2"><span class="syntax-keyword">for</span> i, n <span class="syntax-keyword">in</span> <span class="syntax-function">enumerate</span>(nums):</div>
+<div class="pl-12">diff = target - n</div>
+<div class="pl-12"><span class="syntax-keyword">if</span> diff <span class="syntax-keyword">in</span> prevMap:</div>
+<div class="pl-16"><span class="syntax-keyword">return</span> [prevMap[diff], i]</div>
+<div class="pl-12">prevMap[n] = i</div>
+<div class="pl-8 mt-2"><span class="syntax-keyword">return</span> []</div>
+</div>
+</div>
+<!-- Explain Approach Area -->
+<div class="px-4 py-3 bg-[#0d1117] border-t border-outline-variant">
+<textarea class="w-full bg-surface border border-outline-variant rounded-lg p-3 text-xs text-on-surface placeholder:text-on-surface-variant/40 focus:ring-1 focus:ring-primary-fixed focus:border-primary-fixed outline-none resize-none" placeholder="Explain your approach to the AI Tutor..." rows="2"></textarea>
+</div>
+<!-- Bottom Console -->
+<div class="h-40 bg-surface-container-low border-t border-outline-variant flex flex-col">
+<div class="flex items-center px-4 py-2 border-b border-outline-variant">
+<span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Test Results</span>
+</div>
+<div class="flex-1 p-4 overflow-y-auto">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1.5 text-secondary font-bold">
+<span class="material-symbols-outlined text-sm" data-weight="fill">check_circle</span>
+<span class="text-sm">3/3 Cases Passed</span>
+</div>
+</div>
+<div class="flex items-center gap-4 text-[11px] font-medium text-on-surface-variant">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">speed</span>
+<span>Runtime: 52ms</span>
+</div>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">memory</span>
+<span>Memory: 16.2MB</span>
+</div>
+</div>
+</div>
+<div class="flex gap-2">
+<div class="px-3 py-1.5 rounded bg-surface border border-secondary/30 text-secondary text-[11px] font-bold flex items-center gap-2">Case 1 <span class="material-symbols-outlined text-[10px]" data-weight="fill">check_circle</span></div>
+<div class="px-3 py-1.5 rounded bg-surface border border-secondary/30 text-secondary text-[11px] font-bold flex items-center gap-2">Case 2 <span class="material-symbols-outlined text-[10px]" data-weight="fill">check_circle</span></div>
+<div class="px-3 py-1.5 rounded bg-surface border border-secondary/30 text-secondary text-[11px] font-bold flex items-center gap-2">Case 3 <span class="material-symbols-outlined text-[10px]" data-weight="fill">check_circle</span></div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- AI TUTOR SIDE PANEL (Floating Overlay) -->
+<aside class="fixed top-20 right-6 w-[320px] bottom-10 z-[60] flex flex-col glass rounded-2xl shadow-2xl overflow-hidden border border-primary-fixed/20">
+<!-- AI Header -->
+<div class="p-4 bg-primary-container/20 border-b border-outline-variant">
+<div class="flex justify-between items-center mb-3">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary-fixed text-lg" data-weight="fill">smart_toy</span>
+</div>
+<div>
+<h4 class="text-xs font-bold text-on-surface">AI Tutor</h4>
+<span class="text-[10px] text-on-surface-variant">Active Coding Partner</span>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+<!-- Mastery Progress -->
+<div class="space-y-1">
+<div class="flex justify-between text-[9px] font-bold text-on-surface-variant uppercase">
+<span>Algorithm Mastery</span>
+<span class="text-primary-fixed">67%</span>
+</div>
+<div class="h-1.5 w-full bg-surface rounded-full overflow-hidden">
+<div class="h-full bg-primary-fixed w-[67%] rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Chat Area -->
+<div class="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide">
+<!-- User Message -->
+<div class="flex flex-col items-end">
+<div class="max-w-[85%] bg-primary-container px-3 py-2 rounded-2xl rounded-tr-none">
+<p class="text-xs text-on-primary-container leading-relaxed">
+                        I'm not sure about the edge case when nums is empty.
+                    </p>
+</div>
+<span class="text-[9px] text-on-surface-variant mt-1 mr-1">11:42 AM</span>
+</div>
+<!-- AI Message -->
+<div class="flex flex-col items-start">
+<div class="max-w-[85%] bg-surface px-3 py-2 rounded-2xl rounded-tl-none border border-outline-variant">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="px-1.5 py-0.5 rounded-full bg-tertiary/10 text-tertiary text-[8px] font-bold uppercase border border-tertiary/20">intent: deepening</span>
+</div>
+<p class="text-xs text-on-surface leading-relaxed">
+                        Great question! What does your current code return for an empty array? Think about what happens at line 3.
+                    </p>
+</div>
+<span class="text-[9px] text-on-surface-variant mt-1 ml-1">11:43 AM</span>
+</div>
+</div>
+<!-- AI Input -->
+<div class="p-3 border-t border-outline-variant bg-surface-container">
+<div class="relative">
+<input class="w-full bg-background border border-outline-variant rounded-xl py-2 pl-3 pr-10 text-xs text-on-surface focus:border-primary-fixed focus:ring-1 focus:ring-primary-fixed outline-none" placeholder="Ask AI Tutor..." type="text"/>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-primary-fixed">
+<span class="material-symbols-outlined text-lg">mic</span>
+</button>
+</div>
+</div>
+</aside>
+</body></html>
