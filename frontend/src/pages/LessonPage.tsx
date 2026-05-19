@@ -41,35 +41,39 @@ function renderContent(text: string) {
   });
 }
 
-/* ── Gemini + TTS helpers ────────────────────────────────────── */
+/* ── Groq + TTS helpers ──────────────────────────────────────── */
 
-const GEMINI_KEY = (import.meta.env.VITE_GEMINI_API_KEY ?? "") as string;
+const GROQ_KEY = (import.meta.env.VITE_GROQ_API_KEY ?? "") as string;
 
 interface Msg { role: "user" | "assistant"; content: string; }
 
-async function callGemini(messages: Msg[], systemPrompt: string): Promise<string> {
-  if (!GEMINI_KEY) throw new Error("NO_KEY");
+async function callGroq(messages: Msg[], systemPrompt: string): Promise<string> {
+  if (!GROQ_KEY) throw new Error("NO_KEY");
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
+    "https://api.groq.com/openai/v1/chat/completions",
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${GROQ_KEY}`,
+      },
       body: JSON.stringify({
-        system_instruction: { parts: [{ text: systemPrompt }] },
-        contents: messages.map(m => ({
-          role: m.role === "user" ? "user" : "model",
-          parts: [{ text: m.content }],
-        })),
-        generationConfig: { maxOutputTokens: 400, temperature: 0.7 },
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          { role: "system", content: systemPrompt },
+          ...messages.map(m => ({ role: m.role, content: m.content })),
+        ],
+        max_tokens: 400,
+        temperature: 0.7,
       }),
     }
   );
   if (!res.ok) {
-    if (res.status === 400 || res.status === 403) throw new Error("NO_KEY");
+    if (res.status === 400 || res.status === 401 || res.status === 403) throw new Error("NO_KEY");
     throw new Error(`HTTP ${res.status}`);
   }
   const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text as string | undefined;
+  const text = data.choices?.[0]?.message?.content as string | undefined;
   if (!text) throw new Error("Empty response");
   return text.trim();
 }
@@ -142,7 +146,7 @@ Rules:
       setErrorKind(null);
       setInput("");
 
-      callGemini(history, systemPrompt)
+      callGroq(history, systemPrompt)
         .then(reply => {
           setMessages([...history, { role: "assistant", content: reply }]);
           if (voiceMode) {
@@ -223,7 +227,7 @@ Rules:
             {errorKind === "no_key" && (
               <div className="rounded-xl border border-amber-200 bg-amber-50 p-3">
                 <p className="text-[11px] font-bold text-amber-800 mb-1">API key not configured</p>
-                <p className="text-[10px] text-amber-700">Add <code className="bg-amber-100 px-1 rounded font-mono">VITE_GEMINI_API_KEY</code> to .env</p>
+                <p className="text-[10px] text-amber-700">Add <code className="bg-amber-100 px-1 rounded font-mono">VITE_GROQ_API_KEY</code> to .env</p>
               </div>
             )}
             {errorKind === "network" && (
@@ -346,7 +350,7 @@ Rules:
 
           {errorKind === "no_key" && (
             <div className="w-full rounded-xl border border-amber-200 bg-amber-50 p-3">
-              <p className="text-[10px] text-amber-700">Add <code className="bg-amber-100 px-1 rounded font-mono">VITE_GEMINI_API_KEY</code> to .env</p>
+              <p className="text-[10px] text-amber-700">Add <code className="bg-amber-100 px-1 rounded font-mono">VITE_GROQ_API_KEY</code> to .env</p>
             </div>
           )}
           {errorKind === "network" && (

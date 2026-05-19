@@ -5,12 +5,12 @@ import { useLearnerStore } from "../stores/learnerStore";
 import type { KnowledgeDoc, ReviewCardState } from "../stores/learnerStore";
 import { SAMPLE_COURSES } from "../data/sample";
 
-/* ── Gemini AI extraction ──────────────────────────────────────── */
+/* ── Groq AI extraction ────────────────────────────────────────── */
 
-const GEMINI_KEY = (import.meta.env.VITE_GEMINI_API_KEY ?? "") as string;
+const GROQ_KEY = (import.meta.env.VITE_GROQ_API_KEY ?? "") as string;
 
-async function extractWithGemini(text: string): Promise<{ concepts: string[]; eli5: string }> {
-  if (!GEMINI_KEY) throw new Error("NO_KEY");
+async function extractWithGroq(text: string): Promise<{ concepts: string[]; eli5: string }> {
+  if (!GROQ_KEY) throw new Error("NO_KEY");
 
   const prompt = `You are a computer science study assistant. Analyze this study document and extract key concepts.
 
@@ -29,26 +29,25 @@ Rules:
 - If the document is not about programming/CS, return { "concepts": [], "eli5": "• This document doesn't appear to be about programming or computer science." }`;
 
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
+    "https://api.groq.com/openai/v1/chat/completions",
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${GROQ_KEY}`,
+      },
       body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 600, temperature: 0.2 },
-        safetySettings: [
-          { category: "HARM_CATEGORY_HARASSMENT",        threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-          { category: "HARM_CATEGORY_HATE_SPEECH",       threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-          { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-          { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-        ],
+        model: "llama-3.3-70b-versatile",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 600,
+        temperature: 0.2,
       }),
     }
   );
 
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
-  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text as string | undefined;
+  const raw = data.choices?.[0]?.message?.content as string | undefined;
   if (!raw) throw new Error("Empty response");
   const cleaned = raw.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
   const parsed: { concepts?: unknown; eli5?: unknown } = JSON.parse(cleaned);
@@ -291,7 +290,7 @@ export function KnowledgeHubContent() {
       let eli5Text: string;
 
       try {
-        const result = await extractWithGemini(text);
+        const result = await extractWithGroq(text);
         concepts = result.concepts.length > 0 ? result.concepts : extractConcepts(text);
         eli5Text = result.eli5 || generateELI5(text);
       } catch {

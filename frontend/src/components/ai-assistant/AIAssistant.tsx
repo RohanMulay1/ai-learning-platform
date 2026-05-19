@@ -83,45 +83,43 @@ ${context}
 Be specifically helpful about what the user is currently working on in this context.`;
 }
 
-/* ── Gemini API ───────────────────────────────────────────────── */
+/* ── Groq API ─────────────────────────────────────────────────── */
 
 interface Message { role: "user" | "assistant"; content: string; }
 
-const GEMINI_KEY = (import.meta.env.VITE_GEMINI_API_KEY ?? "") as string;
+const GROQ_KEY = (import.meta.env.VITE_GROQ_API_KEY ?? "") as string;
 
-async function callGemini(messages: Message[], systemPrompt: string): Promise<string> {
-  if (!GEMINI_KEY) throw new Error("NO_KEY");
+async function callGroq(messages: Message[], systemPrompt: string): Promise<string> {
+  if (!GROQ_KEY) throw new Error("NO_KEY");
 
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
+    "https://api.groq.com/openai/v1/chat/completions",
     {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${GROQ_KEY}`,
+      },
       body: JSON.stringify({
-        system_instruction: { parts: [{ text: systemPrompt }] },
-        contents: messages.map(m => ({
-          role: m.role === "user" ? "user" : "model",
-          parts: [{ text: m.content }],
-        })),
-        generationConfig: { maxOutputTokens: 450, temperature: 0.7 },
-        safetySettings: [
-          { category: "HARM_CATEGORY_HARASSMENT",        threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-          { category: "HARM_CATEGORY_HATE_SPEECH",       threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-          { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-          { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+        model: "llama-3.3-70b-versatile",
+        messages: [
+          { role: "system", content: systemPrompt },
+          ...messages.map(m => ({ role: m.role, content: m.content })),
         ],
+        max_tokens: 450,
+        temperature: 0.7,
       }),
     }
   );
 
   if (!res.ok) {
-    if (res.status === 400 || res.status === 403) throw new Error("NO_KEY");
+    if (res.status === 400 || res.status === 401 || res.status === 403) throw new Error("NO_KEY");
     throw new Error(`HTTP ${res.status}`);
   }
 
   const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text as string | undefined;
-  if (!text) throw new Error("Empty response from Gemini");
+  const text = data.choices?.[0]?.message?.content as string | undefined;
+  if (!text) throw new Error("Empty response from Groq");
   return text.trim();
 }
 
@@ -233,7 +231,7 @@ function ChatPanel({
           <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
             <p className="text-xs font-bold text-amber-800 mb-1.5">API Key Not Configured</p>
             <p className="text-[11px] text-amber-700 leading-relaxed">
-              Add <code className="bg-amber-100 px-1 py-0.5 rounded font-mono">VITE_GEMINI_API_KEY</code> to your <code className="bg-amber-100 px-1 py-0.5 rounded font-mono">.env</code> file.
+              Add <code className="bg-amber-100 px-1 py-0.5 rounded font-mono">VITE_GROQ_API_KEY</code> to your <code className="bg-amber-100 px-1 py-0.5 rounded font-mono">.env</code> file.
             </p>
           </div>
         )}
@@ -432,7 +430,7 @@ function VoicePanel({
           <div className="w-full rounded-xl border border-amber-200 bg-amber-50 p-3">
             <p className="text-[11px] font-bold text-amber-800 mb-1">API Key Not Configured</p>
             <p className="text-[10px] text-amber-700 leading-relaxed">
-              Add <code className="bg-amber-100 px-1 rounded font-mono">VITE_GEMINI_API_KEY</code> to your <code className="bg-amber-100 px-1 rounded font-mono">.env</code> file.
+              Add <code className="bg-amber-100 px-1 rounded font-mono">VITE_GROQ_API_KEY</code> to your <code className="bg-amber-100 px-1 rounded font-mono">.env</code> file.
             </p>
           </div>
         )}
@@ -552,7 +550,7 @@ export function AIAssistant() {
     setErrorKind(null);
 
     try {
-      const reply = await callGemini(history, systemPrompt);
+      const reply = await callGroq(history, systemPrompt);
       const next = [...history, { role: "assistant" as const, content: reply }];
       setMessages(next);
 

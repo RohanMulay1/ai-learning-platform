@@ -66,9 +66,9 @@ const LEVEL_RESULT = {
 
 const TOTAL_Q = 5;
 
-/* ── Gemini AI insight ─────────────────────────────── */
+/* ── Groq AI insight ───────────────────────────────── */
 async function getAIInsight(level: Level, goalId: string, score: number): Promise<string> {
-  const key = (import.meta.env.VITE_GEMINI_API_KEY ?? "") as string;
+  const key = (import.meta.env.VITE_GROQ_API_KEY ?? "") as string;
   if (!key) return "";
   const goalLabel = GOALS.find(g => g.id === goalId)?.label ?? goalId;
   const prompt = `A student finished an adaptive coding skill quiz on an AI learning platform.
@@ -76,25 +76,24 @@ Level: ${level}. Goal: ${goalLabel}. Score: ${score}/${TOTAL_Q}.
 Write exactly 2 sentences (max 40 words total). First: one warm acknowledgment of their level. Second: the single most important first action they should take. Direct, specific, motivating. Second person.`;
   try {
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
+      "https://api.groq.com/openai/v1/chat/completions",
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${key}`,
+        },
         body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: prompt }] }],
-          generationConfig: { maxOutputTokens: 90, temperature: 0.75 },
-          safetySettings: [
-            { category: "HARM_CATEGORY_HARASSMENT",        threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-            { category: "HARM_CATEGORY_HATE_SPEECH",       threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-          ],
+          model: "llama-3.3-70b-versatile",
+          messages: [{ role: "user", content: prompt }],
+          max_tokens: 90,
+          temperature: 0.75,
         }),
       }
     );
     if (!res.ok) return "";
     const data = await res.json();
-    return ((data.candidates?.[0]?.content?.parts?.[0]?.text as string) ?? "").trim();
+    return ((data.choices?.[0]?.message?.content as string) ?? "").trim();
   } catch { return ""; }
 }
 

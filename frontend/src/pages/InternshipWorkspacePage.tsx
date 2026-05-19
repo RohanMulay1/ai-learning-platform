@@ -2,10 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { cn } from "../lib/utils";
 
-/* ── Gemini ──────────────────────────────────────────────────── */
+/* ── Groq ────────────────────────────────────────────────────── */
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY ?? "";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+const GROQ_KEY = import.meta.env.VITE_GROQ_API_KEY ?? "";
 
 const STYLE_GUIDES: Record<string, string> = {
   demanding: "terse and critical — always finds something to push harder on. Never fully satisfied but not cruel. References specific code.",
@@ -19,9 +18,8 @@ async function getAgentReaction(
   taskDesc: string,
   isCode: boolean,
 ): Promise<string> {
-  const prompt = `You are ${agent.name}, ${agent.role} at a Series B fintech startup. Communication style: ${STYLE_GUIDES[agent.style] ?? agent.style}
-
-An engineering intern submitted ${isCode ? "code" : "a written analysis"} for: "${taskDesc}"
+  const systemPrompt = `You are ${agent.name}, ${agent.role} at a Series B fintech startup. Communication style: ${STYLE_GUIDES[agent.style] ?? agent.style}`;
+  const userPrompt = `An engineering intern submitted ${isCode ? "code" : "a written analysis"} for: "${taskDesc}"
 
 Submission (first 1200 chars):
 \`\`\`
@@ -30,24 +28,26 @@ ${submission.slice(0, 1200)}
 
 Respond in 2-3 sentences as ${agent.name}. Stay strictly in character. Reference something specific from what they submitted.`;
 
-  const res = await fetch(GEMINI_URL, {
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${GROQ_KEY}`,
+    },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { maxOutputTokens: 130, temperature: 0.85 },
-      safetySettings: [
-        { category: "HARM_CATEGORY_HARASSMENT",        threshold: "BLOCK_ONLY_HIGH" },
-        { category: "HARM_CATEGORY_HATE_SPEECH",       threshold: "BLOCK_ONLY_HIGH" },
-        { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
-        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
+      model: "llama-3.3-70b-versatile",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
       ],
+      max_tokens: 130,
+      temperature: 0.85,
     }),
   });
 
-  if (!res.ok) throw new Error(`Gemini ${res.status}`);
+  if (!res.ok) throw new Error(`Groq ${res.status}`);
   const data = await res.json();
-  return data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "(no response)";
+  return data.choices?.[0]?.message?.content?.trim() ?? "(no response)";
 }
 
 /* ── Day data ────────────────────────────────────────────────── */
