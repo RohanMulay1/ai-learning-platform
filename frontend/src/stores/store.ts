@@ -240,10 +240,10 @@ interface OnboardingStore {
 export const useOnboardingStore = create<OnboardingStore>()(
   persist(
     (set) => ({
-      completed: false,
-      level: null,
-      goalTopics: [],
-      timeline: "",
+      completed: true,
+      level: "beginner",
+      goalTopics: ["Arrays & Hashing", "Two Pointers"],
+      timeline: "3 months",
       setCompleted: (level, goalTopics, timeline = "") => set({ completed: true, level, goalTopics, timeline }),
       reset: () => set({ completed: false, level: null, goalTopics: [], timeline: "" }),
     }),
