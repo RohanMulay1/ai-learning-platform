@@ -5,6 +5,62 @@ import { useInternshipStore, type DayResult, type AgentReactionRecord, type Foll
 import { useProgressStore } from "../stores/store";
 import { fireConfetti, showXPToast } from "../lib/confetti";
 
+/* ── Shared styles (injected once) ────────────────────────────── */
+
+let _stylesInjected = false;
+function injectStyles() {
+  if (_stylesInjected) return;
+  _stylesInjected = true;
+  const s = document.createElement("style");
+  s.textContent = `
+    @keyframes internBg {
+      0%   { background-position: 0% 0%;   }
+      25%  { background-position: 100% 0%; }
+      50%  { background-position: 100% 100%; }
+      75%  { background-position: 0% 100%; }
+      100% { background-position: 0% 0%;   }
+    }
+    @keyframes phaseIn {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+    @keyframes agentIn {
+      from { opacity: 0; transform: translateX(-10px); }
+      to   { opacity: 1; transform: translateX(0);     }
+    }
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(10px) scale(0.98); }
+      to   { opacity: 1; transform: translateY(0)    scale(1);    }
+    }
+    @keyframes pulseRing {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.35); }
+      50%       { box-shadow: 0 0 0 8px rgba(99,102,241,0);   }
+    }
+    .intern-bg {
+      background: linear-gradient(-45deg, #09090f, #0c0818, #070c18, #0b0a14, #09090f);
+      background-size: 350% 350%;
+      animation: internBg 20s ease infinite;
+    }
+    .phase-enter {
+      animation: phaseIn 0.38s cubic-bezier(0.34,1.10,0.64,1) both;
+    }
+    .agent-enter {
+      animation: agentIn 0.32s cubic-bezier(0.34,1.10,0.64,1) both;
+    }
+    .card-enter {
+      animation: cardIn 0.35s cubic-bezier(0.34,1.10,0.64,1) both;
+    }
+    .intern-btn {
+      transition: opacity 0.15s, transform 0.15s, box-shadow 0.15s;
+    }
+    .intern-btn:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+    .intern-btn:active:not(:disabled) { transform: scale(0.97); box-shadow: none; }
+    .cta-pulse { animation: pulseRing 2.5s ease-in-out infinite; }
+  `;
+  document.head.appendChild(s);
+}
+injectStyles();
+
 /* ── Groq helpers ──────────────────────────────────────────────── */
 
 const GROQ_KEY = import.meta.env.VITE_GROQ_API_KEY ?? "";
@@ -686,8 +742,8 @@ function xpForGrade(grade: string) {
 function BriefingScreen({ track, onStart }: { track: TrackMeta; onStart: () => void }) {
   const typeColor = DAY_TYPE_COLOR;
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-2xl">
+    <div className="intern-bg min-h-screen flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-2xl phase-enter">
         {/* Company header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-3 mb-4">
@@ -756,8 +812,8 @@ function BriefingScreen({ track, onStart }: { track: TrackMeta; onStart: () => v
 
         <button
           onClick={onStart}
-          className="w-full py-3.5 rounded-xl text-white font-bold text-base flex items-center justify-center gap-2 transition-all hover:opacity-90 active:scale-[0.98]"
-          style={{ background: `linear-gradient(135deg, ${track.color}, ${track.color}cc)` }}
+          className="intern-btn cta-pulse w-full py-3.5 rounded-xl text-white font-bold text-base flex items-center justify-center gap-2"
+          style={{ background: `linear-gradient(135deg, ${track.color}, ${track.color}bb)`, borderRadius: "12px" }}
         >
           <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>rocket_launch</span>
           Accept Internship — Start Day 1
@@ -784,8 +840,8 @@ function SprintDashboard({
   const completedCount = Object.keys(completedDays).length;
 
   return (
-    <div className="min-h-screen bg-gray-950 p-6 flex flex-col items-center justify-center">
-      <div className="w-full max-w-2xl">
+    <div className="intern-bg min-h-screen p-6 flex flex-col items-center justify-center">
+      <div className="w-full max-w-2xl phase-enter">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <button onClick={() => navigate("/internship")} className="flex items-center gap-2 text-white/40 hover:text-white text-sm transition-colors">
@@ -821,11 +877,12 @@ function SprintDashboard({
               <div
                 key={idx}
                 className={cn(
-                  "rounded-2xl border p-5 transition-all",
+                  "card-enter rounded-2xl border p-5 transition-colors duration-200",
                   result ? "border-green-500/30 bg-green-500/5" :
-                  isCurrent ? "border-white/20 bg-white/5" :
-                  "border-white/5 bg-white/[0.02] opacity-50"
+                  isCurrent ? "border-white/20 bg-white/8" :
+                  "border-white/5 bg-white/[0.02] opacity-40"
                 )}
+                style={{ animationDelay: `${idx * 80}ms` }}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
@@ -848,14 +905,14 @@ function SprintDashboard({
                   {result ? (
                     <button
                       onClick={() => onStartDay(idx)}
-                      className="text-[11px] px-3 py-1.5 rounded-lg border border-white/10 text-white/50 hover:text-white hover:border-white/20 transition-all"
+                      className="intern-btn text-[11px] px-3 py-1.5 rounded-lg border border-white/10 text-white/50 hover:text-white hover:border-white/20"
                     >
                       View Feedback
                     </button>
                   ) : isCurrent ? (
                     <button
                       onClick={() => onStartDay(idx)}
-                      className="text-sm px-4 py-2 rounded-xl text-white font-bold flex items-center gap-2 transition-all hover:opacity-90"
+                      className="intern-btn text-sm px-4 py-2 rounded-xl text-white font-bold flex items-center gap-2"
                       style={{ background: track.color }}
                     >
                       <span className="material-symbols-outlined text-[16px]">play_arrow</span>
@@ -1001,7 +1058,7 @@ function WorkspaceView({
   const typeColor = DAY_TYPE_COLOR[day.type];
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col">
+    <div className="intern-bg min-h-screen flex flex-col">
       {/* Top bar */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 flex-shrink-0">
         <button onClick={onBack} className="flex items-center gap-2 text-white/40 hover:text-white text-sm transition-colors">
@@ -1044,7 +1101,7 @@ function WorkspaceView({
                 const agent = track.agents.find(a => a.name === opener.agentName);
                 if (!agent) return null;
                 return (
-                  <div key={i} className="flex items-start gap-2.5">
+                  <div key={i} className="agent-enter flex items-start gap-2.5" style={{ animationDelay: `${i * 120}ms` }}>
                     <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0" style={{ background: `${agent.color}25`, border: `1px solid ${agent.color}50`, color: agent.color }}>
                       {agent.name[0]}
                     </div>
@@ -1060,7 +1117,7 @@ function WorkspaceView({
 
             {/* Reactions */}
             {subPhase === "feedback" && reactions.map((r, i) => (
-              <div key={i}>
+              <div key={i} className="agent-enter" style={{ animationDelay: `${i * 100}ms` }}>
                 <div className="flex items-start gap-2.5">
                   <div className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0" style={{ background: `${r.agent.color}25`, border: `1px solid ${r.agent.color}50`, color: r.agent.color }}>
                     {r.agent.name[0]}
@@ -1148,7 +1205,7 @@ function WorkspaceView({
                 <p className="text-white/50 text-sm mb-8">Read the scenario on the left, then click when you're ready to work.</p>
                 <button
                   onClick={() => setSubPhase("task")}
-                  className="px-8 py-3 rounded-xl text-white font-bold text-base flex items-center gap-2 mx-auto transition-all hover:opacity-90"
+                  className="intern-btn cta-pulse px-8 py-3 rounded-xl text-white font-bold text-base flex items-center gap-2 mx-auto"
                   style={{ background: track.color }}
                 >
                   <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>edit</span>
@@ -1217,7 +1274,7 @@ function WorkspaceView({
                   <button
                     onClick={handleSubmit}
                     disabled={isSubmitting || !code.trim()}
-                    className="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 disabled:opacity-50 transition-all hover:opacity-90"
+                    className="intern-btn px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 disabled:opacity-40"
                     style={{ background: track.color }}
                   >
                     <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>send</span>
@@ -1239,7 +1296,7 @@ function WorkspaceView({
                       strengths: score.strengths,
                       gaps: score.gaps,
                     })}
-                    className="px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2 transition-all hover:opacity-90"
+                    className="intern-btn px-5 py-2.5 rounded-xl text-white font-bold text-sm flex items-center gap-2"
                     style={{ background: track.color }}
                   >
                     {dayIdx < 2 ? "Next Day →" : "Complete Sprint →"}
@@ -1276,8 +1333,8 @@ function PerformanceReview({ track, completedDays, letter, onBack }: {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 p-6 flex flex-col items-center">
-      <div className="w-full max-w-2xl">
+    <div className="intern-bg min-h-screen p-6 flex flex-col items-center">
+      <div className="w-full max-w-2xl phase-enter">
         {/* Header */}
         <div className="text-center mb-8 pt-4">
           <div className="w-20 h-20 rounded-3xl mx-auto mb-4 flex items-center justify-center text-4xl font-black" style={{ background: grade.bg, border: `2px solid ${grade.border}`, color: grade.color }}>
@@ -1293,8 +1350,8 @@ function PerformanceReview({ track, completedDays, letter, onBack }: {
             { label: "Avg Score", value: `${avgScore}/100`, icon: "analytics" },
             { label: "XP Earned", value: `+${xp}`, icon: "bolt" },
             { label: "Days Completed", value: `${scores.length}/3`, icon: "event_available" },
-          ].map((stat) => (
-            <div key={stat.label} className="rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+          ].map((stat, i) => (
+            <div key={stat.label} className="card-enter rounded-xl border border-white/10 bg-white/5 p-4 text-center" style={{ animationDelay: `${i * 80}ms` }}>
               <span className="material-symbols-outlined text-[20px] text-white/40 mb-1" style={{ fontVariationSettings: "'FILL' 1" }}>{stat.icon}</span>
               <p className="text-white font-black text-xl">{stat.value}</p>
               <p className="text-white/40 text-[10px] mt-0.5">{stat.label}</p>
@@ -1351,14 +1408,14 @@ function PerformanceReview({ track, completedDays, letter, onBack }: {
         <div className="flex gap-3">
           <button
             onClick={copyToClipboard}
-            className="flex-1 py-3 rounded-xl border border-white/10 text-white/60 hover:text-white hover:border-white/20 text-sm font-bold flex items-center justify-center gap-2 transition-all"
+            className="intern-btn flex-1 py-3 rounded-xl border border-white/10 text-white/60 hover:text-white hover:border-white/20 text-sm font-bold flex items-center justify-center gap-2"
           >
             <span className="material-symbols-outlined text-[16px]">{copied ? "check" : "content_copy"}</span>
             {copied ? "Copied!" : "Copy for LinkedIn"}
           </button>
           <button
             onClick={onBack}
-            className="flex-1 py-3 rounded-xl text-white text-sm font-bold flex items-center justify-center gap-2 transition-all hover:opacity-90"
+            className="intern-btn flex-1 py-3 rounded-xl text-white text-sm font-bold flex items-center justify-center gap-2"
             style={{ background: track.color }}
           >
             <span className="material-symbols-outlined text-[16px]">arrow_back</span>
@@ -1394,7 +1451,7 @@ export function InternshipWorkspacePage() {
 
   if (!track) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="intern-bg min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-white text-lg font-bold mb-2">Track not found</p>
           <button onClick={() => navigate("/internship")} className="text-white/50 hover:text-white text-sm">← Back to Internship Board</button>
@@ -1443,7 +1500,7 @@ export function InternshipWorkspacePage() {
 
   if (letterLoading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="intern-bg min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 rounded-full border-2 border-white/20 border-t-white animate-spin mx-auto mb-4" />
           <p className="text-white font-bold mb-1">Writing your letter of recommendation…</p>
