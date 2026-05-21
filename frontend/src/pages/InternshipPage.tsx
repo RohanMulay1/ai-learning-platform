@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { cn } from "../lib/utils";
 import { SAMPLE_COURSES } from "../data/sample";
+import { useInternshipStore } from "../stores/internshipStore";
 
 /* ── Internship tracks ──────────────────────────────────────── */
 
@@ -89,6 +90,10 @@ function TrackCard({ track }: { track: typeof TRACKS[0] }) {
   const navigate = useNavigate();
   const unlocked = isUnlocked(track.requiredCourse);
   const { pct, label } = getUnlockProgress(track.requiredCourse);
+  const sprint = useInternshipStore(s => s.sprints[track.id]);
+  const inProgress = sprint?.started && !sprint?.sprintComplete;
+  const isComplete = sprint?.sprintComplete;
+  const completedDayCount = sprint ? Object.keys(sprint.completedDays).length : 0;
 
   const dayTypeColor = { chaos: "#EF4444", build: "#6366F1", review: "#2EC866" };
 
@@ -115,10 +120,12 @@ function TrackCard({ track }: { track: typeof TRACKS[0] }) {
               <p className="text-[10px] text-gray-400">{track.company}</p>
             </div>
           </div>
-          {unlocked ? (
-            <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200 flex-shrink-0">
-              Unlocked
-            </span>
+          {isComplete ? (
+            <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 flex-shrink-0">Complete</span>
+          ) : inProgress ? (
+            <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex-shrink-0">{completedDayCount}/3 Days</span>
+          ) : unlocked ? (
+            <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full bg-green-50 text-green-700 border border-green-200 flex-shrink-0">Unlocked</span>
           ) : (
             <span className="material-symbols-outlined text-gray-300 text-xl flex-shrink-0">lock</span>
           )}
@@ -182,23 +189,21 @@ function TrackCard({ track }: { track: typeof TRACKS[0] }) {
           disabled={!unlocked}
           onClick={() => unlocked && navigate(`/internship/${track.id}`)}
           className={cn(
-            "w-full py-2.5 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2",
+            "w-full py-2.5 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 active:scale-[0.98]",
             unlocked
-              ? "text-white active:scale-[0.98]"
+              ? "text-white"
               : "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
           )}
           style={unlocked ? { background: track.color } : undefined}
         >
-          {unlocked ? (
-            <>
-              <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>rocket_launch</span>
-              Start Internship Sprint
-            </>
+          {isComplete ? (
+            <><span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>emoji_events</span>View Results</>
+          ) : inProgress ? (
+            <><span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>play_arrow</span>Resume Sprint — Day {completedDayCount + 1}</>
+          ) : unlocked ? (
+            <><span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>rocket_launch</span>Start Internship Sprint</>
           ) : (
-            <>
-              <span className="material-symbols-outlined text-[16px]">lock</span>
-              Complete {label} to Unlock
-            </>
+            <><span className="material-symbols-outlined text-[16px]">lock</span>Complete {label} to Unlock</>
           )}
         </button>
       </div>
@@ -234,7 +239,7 @@ export function InternshipPage() {
           </div>
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-[14px] text-[#6366F1]" style={{ fontVariationSettings: "'FILL' 1" }}>schedule</span>
-            <span className="text-xs text-gray-500">3 simulated days per track</span>
+            <span className="text-xs text-gray-500">~3 hours per track · 3 simulated days</span>
           </div>
           <div className="flex items-center gap-2">
             <span className="material-symbols-outlined text-[14px] text-[#F59E0B]" style={{ fontVariationSettings: "'FILL' 1" }}>smart_toy</span>
