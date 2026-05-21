@@ -37,9 +37,9 @@ function injectStyles() {
       50%       { box-shadow: 0 0 0 8px rgba(99,102,241,0);   }
     }
     .intern-bg {
-      background: linear-gradient(-45deg, #09090f, #0c0818, #070c18, #0b0a14, #09090f);
-      background-size: 350% 350%;
-      animation: internBg 20s ease infinite;
+      background: linear-gradient(-45deg, #0f0b2e, #071428, #1a0826, #06181e, #0f0b2e);
+      background-size: 400% 400%;
+      animation: internBg 14s ease infinite;
     }
     .phase-enter {
       animation: phaseIn 0.38s cubic-bezier(0.34,1.10,0.64,1) both;
